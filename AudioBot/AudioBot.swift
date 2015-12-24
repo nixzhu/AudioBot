@@ -60,7 +60,7 @@ public extension AudioBot {
         stopPlay()
 
         do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryRecord)
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayAndRecord, withOptions: [.MixWithOthers, .DefaultToSpeaker])
 
         } catch let error {
             throw error
