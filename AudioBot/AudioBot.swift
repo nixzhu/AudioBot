@@ -328,6 +328,10 @@ extension AudioBot: AVAudioRecorderDelegate {
 
         print("AudioBot audioRecorderEncodeErrorDidOccur: \(error)")
 
+        if let fileURL = AudioBot.recordingFileURL {
+            AudioBot.removeAudioAtFileURL(fileURL)
+        }
+
         clearForRecording()
     }
 }
