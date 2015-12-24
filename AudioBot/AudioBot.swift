@@ -76,6 +76,10 @@ public extension AudioBot {
             throw Error.NoFileURL
         }
 
+        guard decibelSamplePeriodicReport.reportingFrequency > 0 else {
+            throw Error.InvalidReportingFrequency
+        }
+
         let settings: [String: AnyObject] = settings ?? [
             AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
             AVEncoderAudioQualityKey : AVAudioQuality.Max.rawValue,
@@ -100,9 +104,6 @@ public extension AudioBot {
 
         sharedBot.recordingPeriodicReport = decibelSamplePeriodicReport
 
-        guard decibelSamplePeriodicReport.reportingFrequency > 0 else {
-            throw Error.InvalidReportingFrequency
-        }
         let timeInterval = 1 / decibelSamplePeriodicReport.reportingFrequency
         let timer = NSTimer.scheduledTimerWithTimeInterval(timeInterval, target: sharedBot, selector: "reportRecordingDecibel:", userInfo: nil, repeats: true)
         sharedBot.recordingTimer?.invalidate()
@@ -127,10 +128,7 @@ public extension AudioBot {
     public class func stopRecord(finish: (fileURL: NSURL, duration: NSTimeInterval, decibelSamples: [CGFloat]) -> Void) {
 
         defer {
-            sharedBot.recordingTimer?.invalidate()
-            sharedBot.recordingTimer = nil
-
-            sharedBot.recordingPeriodicReport = nil
+            cleanRecording()
         }
 
         guard let audioRecorder = sharedBot.audioRecorder where audioRecorder.recording else {
@@ -142,6 +140,13 @@ public extension AudioBot {
         audioRecorder.stop()
 
         finish(fileURL: audioRecorder.url, duration: duration, decibelSamples: sharedBot.decibelSamples)
+    }
+
+    private class func cleanRecording() {
+        sharedBot.recordingTimer?.invalidate()
+        sharedBot.recordingTimer = nil
+
+        sharedBot.recordingPeriodicReport = nil
     }
 
     public class func compressDecibelSamples(decibelSamples: [CGFloat], withMaxNumberOfDecibelSamples maxNumberOfDecibelSamples: Int) -> [CGFloat] {
@@ -263,7 +268,7 @@ public extension AudioBot {
         sharedBot.playingFinish = nil
     }
 
-    class func cleanPlaying(finish finish: Bool) {
+    private class func cleanPlaying(finish finish: Bool) {
 
         sharedBot.playingTimer?.invalidate()
         sharedBot.playingTimer = nil
@@ -287,6 +292,8 @@ extension AudioBot: AVAudioRecorderDelegate {
     public func audioRecorderEncodeErrorDidOccur(recorder: AVAudioRecorder, error: NSError?) {
 
         print("AudioBot audioRecorderEncodeErrorDidOccur: \(error)")
+
+        AudioBot.cleanRecording()
     }
 }
 
