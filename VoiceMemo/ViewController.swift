@@ -23,11 +23,11 @@ class ViewController: UIViewController {
 
         if AudioBot.recording {
 
-            AudioBot.stopRecord { [weak self] fileURL, duration, compressedDecibelSamples in
+            AudioBot.stopRecord { [weak self] fileURL, duration, decibelSamples in
 
                 print("fileURL: \(fileURL)")
                 print("duration: \(duration)")
-                print("compressedDecibelSamples: \(compressedDecibelSamples)")
+                print("decibelSamples: \(decibelSamples)")
 
                 let voiceMemo = VoiceMemo(fileURL: fileURL, duration: duration)
                 self?.voiceMemos.append(voiceMemo)
@@ -41,7 +41,7 @@ class ViewController: UIViewController {
                     print("decibelSample: \(decibelSample)")
                 })
 
-                try AudioBot.startRecordAudioToFileURL(nil, withSettings: nil, maxNumberOfDecibelSamples: nil, decibelSamplePeriodicReport: decibelSamplePeriodicReport)
+                try AudioBot.startRecordAudioToFileURL(nil, withSettings: nil, decibelSamplePeriodicReport: decibelSamplePeriodicReport)
 
             } catch let error {
                 print("record error: \(error)")

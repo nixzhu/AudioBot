@@ -47,7 +47,6 @@ public class AudioBot: NSObject {
 
     private var playingFinish: (Bool -> Void)?
 
-    private var maxNumberOfDecibelSamples: Int?
     private var decibelSamples: [CGFloat] = []
 }
 
@@ -55,7 +54,7 @@ public class AudioBot: NSObject {
 
 public extension AudioBot {
 
-    public class func startRecordAudioToFileURL(fileURL: NSURL?, withSettings settings: [String: AnyObject]?, maxNumberOfDecibelSamples: Int? = nil, decibelSamplePeriodicReport: PeriodicReport) throws {
+    public class func startRecordAudioToFileURL(fileURL: NSURL?, withSettings settings: [String: AnyObject]?, decibelSamplePeriodicReport: PeriodicReport) throws {
 
         stopPlay()
 
@@ -99,7 +98,6 @@ public extension AudioBot {
 
         sharedBot.audioRecorder?.record()
 
-        sharedBot.maxNumberOfDecibelSamples = maxNumberOfDecibelSamples
         sharedBot.recordingPeriodicReport = decibelSamplePeriodicReport
 
         guard decibelSamplePeriodicReport.reportingFrequency > 0 else {
@@ -125,7 +123,7 @@ public extension AudioBot {
         decibelSamples.append(normalizedDecibel)
     }
 
-    public class func stopRecord(finish: (fileURL: NSURL, duration: NSTimeInterval, compressedDecibelSamples: [CGFloat]) -> Void) {
+    public class func stopRecord(finish: (fileURL: NSURL, duration: NSTimeInterval, decibelSamples: [CGFloat]) -> Void) {
 
         defer {
             sharedBot.recordingTimer?.invalidate()
@@ -142,6 +140,9 @@ public extension AudioBot {
 
         audioRecorder.stop()
 
+        finish(fileURL: audioRecorder.url, duration: duration, decibelSamples: sharedBot.decibelSamples)
+
+        /*
         // handle decibel samples compresse if need
 
         let compressedDecibelSamples: [CGFloat]
@@ -189,6 +190,7 @@ public extension AudioBot {
         }
 
         finish(fileURL: audioRecorder.url, duration: duration, compressedDecibelSamples: compressedDecibelSamples)
+        */
     }
 }
 
