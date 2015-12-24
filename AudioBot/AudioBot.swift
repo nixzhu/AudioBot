@@ -48,6 +48,28 @@ public class AudioBot: NSObject {
     private var playingFinish: (Bool -> Void)?
 
     private var decibelSamples: [CGFloat] = []
+
+    private func clearForRecording() {
+        recordingTimer?.invalidate()
+        recordingTimer = nil
+
+        recordingPeriodicReport = nil
+    }
+
+    private func clearForPlaying(finish finish: Bool) {
+
+        playingTimer?.invalidate()
+        playingTimer = nil
+
+        if finish {
+            playingPeriodicReport?.report(value: 0)
+        }
+        playingPeriodicReport = nil
+    }
+
+    private func deactiveAudioSessionAndNotifyOthers() {
+        let _ = try? AVAudioSession.sharedInstance().setActive(false, withOptions: .NotifyOthersOnDeactivation)
+    }
 }
 
 // MARK: - Record
@@ -60,6 +82,7 @@ public extension AudioBot {
 
         do {
             try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayAndRecord, withOptions: [.MixWithOthers, .DefaultToSpeaker])
+            try AVAudioSession.sharedInstance().setActive(true)
 
         } catch let error {
             throw error
@@ -110,7 +133,7 @@ public extension AudioBot {
         sharedBot.recordingTimer = timer
     }
 
-    func reportRecordingDecibel(sender: NSTimer) {
+    @objc private func reportRecordingDecibel(sender: NSTimer) {
 
         guard let audioRecorder = audioRecorder else {
             return
@@ -128,7 +151,7 @@ public extension AudioBot {
     public class func stopRecord(finish: (fileURL: NSURL, duration: NSTimeInterval, decibelSamples: [CGFloat]) -> Void) {
 
         defer {
-            cleanRecording()
+            sharedBot.clearForRecording()
         }
 
         guard let audioRecorder = sharedBot.audioRecorder where audioRecorder.recording else {
@@ -140,13 +163,6 @@ public extension AudioBot {
         audioRecorder.stop()
 
         finish(fileURL: audioRecorder.url, duration: duration, decibelSamples: sharedBot.decibelSamples)
-    }
-
-    private class func cleanRecording() {
-        sharedBot.recordingTimer?.invalidate()
-        sharedBot.recordingTimer = nil
-
-        sharedBot.recordingPeriodicReport = nil
     }
 
     public class func compressDecibelSamples(decibelSamples: [CGFloat], withMaxNumberOfDecibelSamples maxNumberOfDecibelSamples: Int) -> [CGFloat] {
@@ -199,9 +215,10 @@ public extension AudioBot {
 
         stopRecord { _, _, _ in }
 
-        if AVAudioSession.sharedInstance().category == AVAudioSessionCategoryPlayAndRecord {
+        if AVAudioSession.sharedInstance().category != AVAudioSessionCategoryPlayback {
             do {
                 try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+                try AVAudioSession.sharedInstance().setActive(true)
             } catch let error {
                 throw error
             }
@@ -240,7 +257,7 @@ public extension AudioBot {
         sharedBot.playingTimer = timer
     }
 
-    func reportPlayingProgress(sender: NSTimer) {
+    @objc private func reportPlayingProgress(sender: NSTimer) {
 
         guard let audioPlayer = audioPlayer else {
             return
@@ -253,30 +270,23 @@ public extension AudioBot {
 
     public class func pausePlay() {
 
-        cleanPlaying(finish: false)
+        sharedBot.clearForPlaying(finish: false)
 
         sharedBot.audioPlayer?.pause()
+
+        sharedBot.deactiveAudioSessionAndNotifyOthers()
     }
 
     public class func stopPlay() {
 
-        cleanPlaying(finish: true)
+        sharedBot.clearForPlaying(finish: true)
 
         sharedBot.audioPlayer?.stop()
 
         sharedBot.playingFinish?(true)
         sharedBot.playingFinish = nil
-    }
 
-    private class func cleanPlaying(finish finish: Bool) {
-
-        sharedBot.playingTimer?.invalidate()
-        sharedBot.playingTimer = nil
-
-        if finish {
-            sharedBot.playingPeriodicReport?.report(value: 0)
-        }
-        sharedBot.playingPeriodicReport = nil
+        sharedBot.deactiveAudioSessionAndNotifyOthers()
     }
 }
 
@@ -293,7 +303,7 @@ extension AudioBot: AVAudioRecorderDelegate {
 
         print("AudioBot audioRecorderEncodeErrorDidOccur: \(error)")
 
-        AudioBot.cleanRecording()
+        clearForRecording()
     }
 }
 
@@ -305,18 +315,22 @@ extension AudioBot: AVAudioPlayerDelegate {
 
         print("AudioBot audioPlayerDidFinishPlaying: \(flag)")
 
-        AudioBot.cleanPlaying(finish: true)
+        clearForPlaying(finish: true)
         playingFinish?(true)
         playingFinish = nil
+
+        deactiveAudioSessionAndNotifyOthers()
     }
 
     public func audioPlayerDecodeErrorDidOccur(player: AVAudioPlayer, error: NSError?) {
 
         print("AudioBot audioPlayerDecodeErrorDidOccur: \(error)")
 
-        AudioBot.cleanPlaying(finish: true)
+        clearForPlaying(finish: true)
         playingFinish?(false)
         playingFinish = nil
+
+        deactiveAudioSessionAndNotifyOthers()
     }
 }
 
