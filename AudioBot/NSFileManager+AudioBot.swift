@@ -29,7 +29,7 @@ extension NSFileManager {
         return nil
     }
 
-    class func audiobot_audioURLWithName(name: String) -> NSURL? {
+    class func audiobot_audioFileURLWithName(name: String) -> NSURL? {
 
         if let audioCachesURL = audiobot_audioCachesURL() {
             return audioCachesURL.URLByAppendingPathComponent("\(name).m4a")
@@ -37,4 +37,10 @@ extension NSFileManager {
 
         return nil
     }
+
+    class func audiobot_removeAudioAtFileURL(fileURL: NSURL) {
+
+        let _ = try? NSFileManager.defaultManager().removeItemAtURL(fileURL)
+    }
 }
+

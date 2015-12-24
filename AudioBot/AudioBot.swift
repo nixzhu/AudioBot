@@ -50,6 +50,7 @@ public class AudioBot: NSObject {
     private var decibelSamples: [CGFloat] = []
 
     private func clearForRecording() {
+
         recordingTimer?.invalidate()
         recordingTimer = nil
 
@@ -68,6 +69,7 @@ public class AudioBot: NSObject {
     }
 
     private func deactiveAudioSessionAndNotifyOthers() {
+
         let _ = try? AVAudioSession.sharedInstance().setActive(false, withOptions: .NotifyOthersOnDeactivation)
     }
 }
@@ -119,7 +121,7 @@ public extension AudioBot {
             // TODO: delete previews record file?
         }
 
-        guard let fileURL = (fileURL ?? NSFileManager.audiobot_audioURLWithName(NSUUID().UUIDString)) else {
+        guard let fileURL = (fileURL ?? NSFileManager.audiobot_audioFileURLWithName(NSUUID().UUIDString)) else {
             throw Error.NoFileURL
         }
 
@@ -181,6 +183,11 @@ public extension AudioBot {
         audioRecorder.stop()
 
         finish(fileURL: audioRecorder.url, duration: duration, decibelSamples: sharedBot.decibelSamples)
+    }
+
+    public class func removeAudioAtFileURL(fileURL: NSURL) {
+
+        NSFileManager.audiobot_removeAudioAtFileURL(fileURL)
     }
 
     public class func compressDecibelSamples(decibelSamples: [CGFloat], withMaxNumberOfDecibelSamples maxNumberOfDecibelSamples: Int) -> [CGFloat] {
