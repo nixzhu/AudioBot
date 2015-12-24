@@ -76,7 +76,31 @@ public class AudioBot: NSObject {
 
 public extension AudioBot {
 
-    public class func startRecordAudioToFileURL(fileURL: NSURL?, withSettings settings: [String: AnyObject]?, decibelSamplePeriodicReport: PeriodicReport) throws {
+    public enum Usage {
+
+        case Normal
+        case Custom(settings: [String: AnyObject])
+
+        var settings: [String: AnyObject] {
+
+            switch self {
+
+            case .Normal:
+                return [
+                    AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+                    AVEncoderAudioQualityKey : AVAudioQuality.Medium.rawValue,
+                    AVEncoderBitRateKey : 64000,
+                    AVNumberOfChannelsKey: 2,
+                    AVSampleRateKey : 44100.0
+                ]
+
+            case .Custom(let settings):
+                return settings
+            }
+        }
+    }
+
+    public class func startRecordAudioToFileURL(fileURL: NSURL?, forUsage usage: Usage, withDecibelSamplePeriodicReport decibelSamplePeriodicReport: PeriodicReport) throws {
 
         stopPlay()
 
@@ -103,13 +127,7 @@ public extension AudioBot {
             throw Error.InvalidReportingFrequency
         }
 
-        let settings: [String: AnyObject] = settings ?? [
-            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
-            AVEncoderAudioQualityKey : AVAudioQuality.Max.rawValue,
-            AVEncoderBitRateKey : 64000,
-            AVNumberOfChannelsKey: 2,
-            AVSampleRateKey : 44100.0
-        ]
+        let settings = usage.settings
 
         do {
             let audioRecorder = try AVAudioRecorder(URL: fileURL, settings: settings)

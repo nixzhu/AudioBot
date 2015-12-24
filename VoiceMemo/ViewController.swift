@@ -41,7 +41,7 @@ class ViewController: UIViewController {
                     print("decibelSample: \(decibelSample)")
                 })
 
-                try AudioBot.startRecordAudioToFileURL(nil, withSettings: nil, decibelSamplePeriodicReport: decibelSamplePeriodicReport)
+                try AudioBot.startRecordAudioToFileURL(nil, forUsage: .Normal, withDecibelSamplePeriodicReport: decibelSamplePeriodicReport)
 
             } catch let error {
                 print("record error: \(error)")
