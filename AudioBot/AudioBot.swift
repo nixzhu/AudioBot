@@ -141,56 +141,47 @@ public extension AudioBot {
         audioRecorder.stop()
 
         finish(fileURL: audioRecorder.url, duration: duration, decibelSamples: sharedBot.decibelSamples)
+    }
 
-        /*
-        // handle decibel samples compresse if need
+    public class func compressDecibelSamples(decibelSamples: [CGFloat], withMaxNumberOfDecibelSamples maxNumberOfDecibelSamples: Int) -> [CGFloat] {
 
-        let compressedDecibelSamples: [CGFloat]
-
-        if let maxNumberOfDecibelSamples = sharedBot.maxNumberOfDecibelSamples where maxNumberOfDecibelSamples > 0 {
-
-            func f(x: Int, max: Int) -> Int {
-                let n = 1 - 1 / exp(Double(x) / 100)
-                return Int(Double(max) * n)
-            }
-
-            let finalNumber = f(sharedBot.decibelSamples.count, max: maxNumberOfDecibelSamples)
-
-            func averageSamplingFrom(values:[CGFloat], withCount count: Int) -> [CGFloat] {
-
-                let step = Double(values.count) / Double(count)
-
-                var outputValues = [CGFloat]()
-
-                var x: Double = 0
-
-                for _ in 0..<count {
-
-                    let index = Int(x)
-
-                    if index < values.count {
-                        let value = values[index]
-                        let fixedValue = CGFloat(Int(value * 100)) / 100 // 最多两位小数
-                        outputValues.append(fixedValue)
-
-                    } else {
-                        break
-                    }
-                    
-                    x += step
-                }
-                
-                return outputValues
-            }
-
-            compressedDecibelSamples = averageSamplingFrom(sharedBot.decibelSamples, withCount: finalNumber)
-
-        } else {
-            compressedDecibelSamples = sharedBot.decibelSamples
+        func f(x: Int, max: Int) -> Int {
+            let n = 1 - 1 / exp(Double(x) / 100)
+            return Int(Double(max) * n)
         }
 
-        finish(fileURL: audioRecorder.url, duration: duration, compressedDecibelSamples: compressedDecibelSamples)
-        */
+        let finalNumber = f(decibelSamples.count, max: maxNumberOfDecibelSamples)
+
+        func averageSamplingFrom(values: [CGFloat], withCount count: Int) -> [CGFloat] {
+
+            let step = Double(values.count) / Double(count)
+
+            var outputValues = [CGFloat]()
+
+            var x: Double = 0
+
+            for _ in 0..<count {
+
+                let index = Int(x)
+
+                if index < values.count {
+                    let value = values[index]
+                    let fixedValue = CGFloat(Int(value * 100)) / 100 // 最多两位小数
+                    outputValues.append(fixedValue)
+
+                } else {
+                    break
+                }
+
+                x += step
+            }
+
+            return outputValues
+        }
+
+        let compressedDecibelSamples = averageSamplingFrom(sharedBot.decibelSamples, withCount: finalNumber)
+
+        return compressedDecibelSamples
     }
 }
 
