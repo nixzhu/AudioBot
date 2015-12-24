@@ -202,6 +202,10 @@ public extension AudioBot {
             }
         }
 
+        guard progressPeriodicReport.reportingFrequency > 0 else {
+            throw Error.InvalidReportingFrequency
+        }
+
         if let audioPlayer = sharedBot.audioPlayer where audioPlayer.url == fileURL {
             audioPlayer.play()
 
@@ -217,21 +221,18 @@ public extension AudioBot {
                 audioPlayer.currentTime = fromTime
                 audioPlayer.play()
 
-                sharedBot.playingPeriodicReport = progressPeriodicReport
-                sharedBot.playingFinish = finish
-
-                guard progressPeriodicReport.reportingFrequency > 0 else {
-                    throw Error.InvalidReportingFrequency
-                }
-                let timeInterval = 1 / progressPeriodicReport.reportingFrequency
-                let timer = NSTimer.scheduledTimerWithTimeInterval(timeInterval, target: sharedBot, selector: "reportPlayingProgress:", userInfo: nil, repeats: true)
-                sharedBot.playingTimer?.invalidate()
-                sharedBot.playingTimer = timer
-
             } catch let error {
                 throw error
             }
         }
+
+        sharedBot.playingPeriodicReport = progressPeriodicReport
+        sharedBot.playingFinish = finish
+
+        let timeInterval = 1 / progressPeriodicReport.reportingFrequency
+        let timer = NSTimer.scheduledTimerWithTimeInterval(timeInterval, target: sharedBot, selector: "reportPlayingProgress:", userInfo: nil, repeats: true)
+        sharedBot.playingTimer?.invalidate()
+        sharedBot.playingTimer = timer
     }
 
     func reportPlayingProgress(sender: NSTimer) {
@@ -247,12 +248,14 @@ public extension AudioBot {
 
     public class func pausePlay() {
 
+        cleanPlaying(finish: false)
+
         sharedBot.audioPlayer?.pause()
     }
 
     public class func stopPlay() {
 
-        cleanBeforePlayingFinish()
+        cleanPlaying(finish: true)
 
         sharedBot.audioPlayer?.stop()
 
@@ -260,12 +263,14 @@ public extension AudioBot {
         sharedBot.playingFinish = nil
     }
 
-    class func cleanBeforePlayingFinish() {
+    class func cleanPlaying(finish finish: Bool) {
 
         sharedBot.playingTimer?.invalidate()
         sharedBot.playingTimer = nil
 
-        sharedBot.playingPeriodicReport?.report(value: 0)
+        if finish {
+            sharedBot.playingPeriodicReport?.report(value: 0)
+        }
         sharedBot.playingPeriodicReport = nil
     }
 }
@@ -293,7 +298,7 @@ extension AudioBot: AVAudioPlayerDelegate {
 
         print("AudioBot audioPlayerDidFinishPlaying: \(flag)")
 
-        AudioBot.cleanBeforePlayingFinish()
+        AudioBot.cleanPlaying(finish: true)
         playingFinish?(true)
         playingFinish = nil
     }
@@ -302,7 +307,7 @@ extension AudioBot: AVAudioPlayerDelegate {
 
         print("AudioBot audioPlayerDecodeErrorDidOccur: \(error)")
 
-        AudioBot.cleanBeforePlayingFinish()
+        AudioBot.cleanPlaying(finish: true)
         playingFinish?(false)
         playingFinish = nil
     }
