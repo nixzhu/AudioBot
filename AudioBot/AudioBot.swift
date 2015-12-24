@@ -105,6 +105,7 @@ public extension AudioBot {
         }
         let timeInterval = 1 / decibelSamplePeriodicReport.reportingFrequency
         let timer = NSTimer.scheduledTimerWithTimeInterval(timeInterval, target: sharedBot, selector: "reportRecordingDecibel:", userInfo: nil, repeats: true)
+        sharedBot.recordingTimer?.invalidate()
         sharedBot.recordingTimer = timer
     }
 
@@ -193,7 +194,7 @@ public extension AudioBot {
 
         stopRecord { _, _, _ in }
 
-        if AVAudioSession.sharedInstance().category == AVAudioSessionCategoryRecord {
+        if AVAudioSession.sharedInstance().category == AVAudioSessionCategoryPlayAndRecord {
             do {
                 try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
             } catch let error {
@@ -224,6 +225,7 @@ public extension AudioBot {
                 }
                 let timeInterval = 1 / progressPeriodicReport.reportingFrequency
                 let timer = NSTimer.scheduledTimerWithTimeInterval(timeInterval, target: sharedBot, selector: "reportPlayingProgress:", userInfo: nil, repeats: true)
+                sharedBot.playingTimer?.invalidate()
                 sharedBot.playingTimer = timer
 
             } catch let error {
@@ -250,12 +252,21 @@ public extension AudioBot {
 
     public class func stopPlay() {
 
+        cleanBeforePlayingFinish()
+
+        sharedBot.audioPlayer?.stop()
+
+        sharedBot.playingFinish?(true)
+        sharedBot.playingFinish = nil
+    }
+
+    class func cleanBeforePlayingFinish() {
+
         sharedBot.playingTimer?.invalidate()
         sharedBot.playingTimer = nil
 
+        sharedBot.playingPeriodicReport?.report(value: 0)
         sharedBot.playingPeriodicReport = nil
-
-        sharedBot.audioPlayer?.stop()
     }
 }
 
@@ -282,14 +293,18 @@ extension AudioBot: AVAudioPlayerDelegate {
 
         print("AudioBot audioPlayerDidFinishPlaying: \(flag)")
 
+        AudioBot.cleanBeforePlayingFinish()
         playingFinish?(true)
+        playingFinish = nil
     }
 
     public func audioPlayerDecodeErrorDidOccur(player: AVAudioPlayer, error: NSError?) {
 
         print("AudioBot audioPlayerDecodeErrorDidOccur: \(error)")
 
+        AudioBot.cleanBeforePlayingFinish()
         playingFinish?(false)
+        playingFinish = nil
     }
 }
 
