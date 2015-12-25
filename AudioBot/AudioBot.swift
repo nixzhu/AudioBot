@@ -10,6 +10,11 @@ import AVFoundation
 
 public class AudioBot: NSObject {
 
+    public static var mixWithOthersWhenRecording: Bool = false
+
+    private override init() {
+        super.init()
+    }
     private static let sharedBot = AudioBot()
 
     private var audioRecorder: AVAudioRecorder?
@@ -107,7 +112,12 @@ public extension AudioBot {
         stopPlay()
 
         do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayAndRecord, withOptions: [.MixWithOthers, .DefaultToSpeaker])
+            if mixWithOthersWhenRecording {
+                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayAndRecord, withOptions: [.MixWithOthers, .DefaultToSpeaker])
+            } else {
+                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryRecord)
+            }
+
             try AVAudioSession.sharedInstance().setActive(true)
 
         } catch let error {
