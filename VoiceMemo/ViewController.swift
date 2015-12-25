@@ -13,6 +13,7 @@ class ViewController: UIViewController {
 
     @IBOutlet weak var voiceMemosTableView: UITableView!
 
+    @IBOutlet weak var recordButton: RecordButton!
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -35,6 +36,8 @@ class ViewController: UIViewController {
                 self?.voiceMemosTableView.reloadData()
             }
 
+            recordButton.appearance = .Default
+
         } else {
             do {
                 let decibelSamplePeriodicReport: AudioBot.PeriodicReport = (reportingFrequency: 10, report: { decibelSample in
@@ -43,6 +46,8 @@ class ViewController: UIViewController {
 
                 try AudioBot.startRecordAudioToFileURL(nil, forUsage: .Normal, withDecibelSamplePeriodicReport: decibelSamplePeriodicReport)
 
+                recordButton.appearance = .Recording
+                
             } catch let error {
                 print("record error: \(error)")
             }
