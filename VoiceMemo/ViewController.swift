@@ -14,6 +14,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var voiceMemosTableView: UITableView!
 
     @IBOutlet weak var recordButton: RecordButton!
+
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -40,7 +41,7 @@ class ViewController: UIViewController {
 
         } else {
             do {
-                let decibelSamplePeriodicReport: AudioBot.PeriodicReport = (reportingFrequency: 10, report: { decibelSample in
+                let decibelSamplePeriodicReport: AudioBot.PeriodicReport = (reportingFrequency: 10, report: { [weak self] decibelSample in
                     print("decibelSample: \(decibelSample)")
                 })
 
