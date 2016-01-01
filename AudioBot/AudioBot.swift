@@ -45,14 +45,14 @@ public class AudioBot: NSObject {
         case NoFileURL
     }
 
-    public typealias PeriodicReport = (reportingFrequency: NSTimeInterval, report: (value: CGFloat) -> Void)
+    public typealias PeriodicReport = (reportingFrequency: NSTimeInterval, report: (value: Float) -> Void)
 
     private var recordingPeriodicReport: PeriodicReport?
     private var playingPeriodicReport: PeriodicReport?
 
     private var playingFinish: (Bool -> Void)?
 
-    private var decibelSamples: [CGFloat] = []
+    private var decibelSamples: [Float] = []
 
     private func clearForRecording() {
 
@@ -171,14 +171,14 @@ public extension AudioBot {
 
         audioRecorder.updateMeters()
 
-        let normalizedDecibel = CGFloat(pow(10, audioRecorder.averagePowerForChannel(0) / 40))
+        let normalizedDecibel = pow(10, audioRecorder.averagePowerForChannel(0) * 0.05)
 
         recordingPeriodicReport?.report(value: normalizedDecibel)
 
         decibelSamples.append(normalizedDecibel)
     }
 
-    public class func stopRecord(finish: (fileURL: NSURL, duration: NSTimeInterval, decibelSamples: [CGFloat]) -> Void) {
+    public class func stopRecord(finish: (fileURL: NSURL, duration: NSTimeInterval, decibelSamples: [Float]) -> Void) {
 
         defer {
             sharedBot.clearForRecording()
@@ -200,7 +200,7 @@ public extension AudioBot {
         NSFileManager.audiobot_removeAudioAtFileURL(fileURL)
     }
 
-    public class func compressDecibelSamples(decibelSamples: [CGFloat], withMaxNumberOfDecibelSamples maxNumberOfDecibelSamples: Int) -> [CGFloat] {
+    public class func compressDecibelSamples(decibelSamples: [Float], withMaxNumberOfDecibelSamples maxNumberOfDecibelSamples: Int) -> [Float] {
 
         func f(x: Int, max: Int) -> Int {
             let n = 1 - 1 / exp(Double(x) / 100)
@@ -209,11 +209,11 @@ public extension AudioBot {
 
         let finalNumber = f(decibelSamples.count, max: maxNumberOfDecibelSamples)
 
-        func averageSamplingFrom(values: [CGFloat], withCount count: Int) -> [CGFloat] {
+        func averageSamplingFrom(values: [Float], withCount count: Int) -> [Float] {
 
             let step = Double(values.count) / Double(count)
 
-            var outputValues = [CGFloat]()
+            var outputValues = [Float]()
 
             var x: Double = 0
 
@@ -223,7 +223,7 @@ public extension AudioBot {
 
                 if index < values.count {
                     let value = values[index]
-                    let fixedValue = CGFloat(Int(value * 100)) / 100 // 最多两位小数
+                    let fixedValue = Float(Int(value * 100)) / 100 // 最多两位小数
                     outputValues.append(fixedValue)
 
                 } else {
@@ -300,7 +300,7 @@ public extension AudioBot {
 
         let progress = audioPlayer.currentTime / audioPlayer.duration
 
-        playingPeriodicReport?.report(value: CGFloat(progress))
+        playingPeriodicReport?.report(value: Float(progress))
     }
 
     public class func pausePlay() {

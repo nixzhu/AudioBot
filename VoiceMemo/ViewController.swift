@@ -88,9 +88,9 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
                         let progressPeriodicReport: AudioBot.PeriodicReport = (reportingFrequency: 10, report: { progress in
                             print("progress: \(progress)")
 
-                            voiceMemo.progress = progress
+                            voiceMemo.progress = CGFloat(progress)
 
-                            progressView.progress = Float(progress)
+                            progressView.progress = progress
                         })
 
                         let fromTime = NSTimeInterval(voiceMemo.progress) * voiceMemo.duration
