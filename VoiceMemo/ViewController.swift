@@ -41,7 +41,7 @@ class ViewController: UIViewController {
 
         } else {
             do {
-                let decibelSamplePeriodicReport: AudioBot.PeriodicReport = (reportingFrequency: 10, report: { [weak self] decibelSample in
+                let decibelSamplePeriodicReport: AudioBot.PeriodicReport = (reportingFrequency: 10, report: { decibelSample in
                     print("decibelSample: \(decibelSample)")
                 })
 
