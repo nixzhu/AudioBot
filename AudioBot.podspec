@@ -1,12 +1,13 @@
 Pod::Spec.new do |s|
 
   s.name        = "AudioBot"
-  s.version     = "0.1"
+  s.version     = "0.2"
   s.summary     = "AudioBot helps your do audio record & playback."
 
   s.description = <<-DESC
                    AudioBot make audio record & playback easier.
-                   And, it will do decibel sampling when recording.
+                   It will do decibel sampling when recording.
+                   And it can mix playing music when recording.
                    DESC
 
   s.homepage    = "https://github.com/nixzhu/AudioBot"

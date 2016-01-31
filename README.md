@@ -1,6 +1,6 @@
 <p>
-<a href="http://cocoadocs.org/docsets/AudioBot"><img src="https://img.shields.io/cocoapods/v/AudioBot.svg?style=flat"></a> 
-<a href="https://github.com/Carthage/Carthage/"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat"></a> 
+<a href="http://cocoadocs.org/docsets/AudioBot"><img src="https://img.shields.io/cocoapods/v/AudioBot.svg?style=flat"></a>
+<a href="https://github.com/Carthage/Carthage/"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat"></a>
 </p>
 
 # AudioBot
@@ -20,13 +20,13 @@ See the demo.
 ### CocoaPods
 
 ```ruby
-pod 'AudioBot', '~> 0.1'
+pod 'AudioBot', '~> 0.2'
 ```
 
 ### Carthage
 
 ```ogdl
-github "nixzhu/AudioBot" >= 0.1
+github "nixzhu/AudioBot" >= 0.2
 ```
 
 ## Contact
