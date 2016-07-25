@@ -202,7 +202,7 @@ public extension AudioBot {
         NSFileManager.audiobot_removeAudioAtFileURL(fileURL)
     }
 
-    public class func compressDecibelSamples(decibelSamples: [Float], withSamplingInterval samplingInterval: Int, maxNumberOfDecibelSamples: Int) -> [Float] {
+    public class func compressDecibelSamples(decibelSamples: [Float], withSamplingInterval samplingInterval: Int, minNumberOfDecibelSamples: Int, maxNumberOfDecibelSamples: Int) -> [Float] {
 
         func f(x: Int, max: Int) -> Int {
             let n = 1 - 1 / exp(Double(x) / 100)
@@ -210,11 +210,12 @@ public extension AudioBot {
         }
 
         let decibelSamples = sharedBot.decibelSamples
+        let realSamplingInterval = min(samplingInterval, decibelSamples.count / minNumberOfDecibelSamples)
         var samples: [Float] = []
         var i = 0
         while i < decibelSamples.count {
             samples.append(decibelSamples[i])
-            i += samplingInterval
+            i += realSamplingInterval
         }
 
         let finalNumber = f(samples.count, max: maxNumberOfDecibelSamples)
@@ -249,8 +250,7 @@ public extension AudioBot {
         let compressedDecibelSamples = averageSamplingFrom(samples, withCount: finalNumber)
         
         return compressedDecibelSamples
-    }
-}
+    }}
 
 // MARK: - Playback
 
