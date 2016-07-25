@@ -11,7 +11,13 @@ import Foundation
 extension NSFileManager {
 
     class func audiobot_cachesURL() -> NSURL {
-        return try! NSFileManager.defaultManager().URLForDirectory(.CachesDirectory, inDomain: .UserDomainMask, appropriateForURL: nil, create: false)
+
+        do {
+            return try NSFileManager.defaultManager().URLForDirectory(.CachesDirectory, inDomain: .UserDomainMask, appropriateForURL: nil, create: false)
+
+        } catch let error {
+            fatalError("AudioBot: \(error)")
+        }
     }
 
     class func audiobot_audioCachesURL() -> NSURL? {
@@ -23,7 +29,9 @@ extension NSFileManager {
         do {
             try fileManager.createDirectoryAtURL(audioCachesURL, withIntermediateDirectories: true, attributes: nil)
             return audioCachesURL
-        } catch _ {
+
+        } catch let error {
+            print("AudioBot: \(error)")
         }
 
         return nil
@@ -40,7 +48,12 @@ extension NSFileManager {
 
     class func audiobot_removeAudioAtFileURL(fileURL: NSURL) {
 
-        let _ = try? NSFileManager.defaultManager().removeItemAtURL(fileURL)
+        do {
+            try NSFileManager.defaultManager().removeItemAtURL(fileURL)
+
+        } catch let error {
+            print("AudioBot: \(error)")
+        }
     }
 }
 
