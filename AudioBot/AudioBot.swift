@@ -60,6 +60,8 @@ public class AudioBot: NSObject {
         recordingTimer = nil
 
         recordingPeriodicReport = nil
+
+        decibelSamples = []
     }
 
     private func clearForPlaying(finish finish: Bool) {
