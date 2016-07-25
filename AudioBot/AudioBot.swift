@@ -204,12 +204,26 @@ public extension AudioBot {
 
     public class func compressDecibelSamples(decibelSamples: [Float], withSamplingInterval samplingInterval: Int, minNumberOfDecibelSamples: Int, maxNumberOfDecibelSamples: Int) -> [Float] {
 
+        guard samplingInterval > 0 else {
+            fatalError("Invlid samplingInterval!")
+        }
+        guard minNumberOfDecibelSamples > 0 else {
+            fatalError("Invlid minNumberOfDecibelSamples!")
+        }
+        guard maxNumberOfDecibelSamples >= minNumberOfDecibelSamples else {
+            fatalError("Invlid maxNumberOfDecibelSamples!")
+        }
+
+        guard decibelSamples.count >= minNumberOfDecibelSamples else {
+            print("Warning: Insufficient number of decibelSamples!")
+            return decibelSamples
+        }
+
         func f(x: Int, max: Int) -> Int {
             let n = 1 - 1 / exp(Double(x) / 100)
             return Int(Double(max) * n)
         }
 
-        let decibelSamples = sharedBot.decibelSamples
         let realSamplingInterval = min(samplingInterval, decibelSamples.count / minNumberOfDecibelSamples)
         var samples: [Float] = []
         var i = 0
@@ -250,7 +264,8 @@ public extension AudioBot {
         let compressedDecibelSamples = averageSamplingFrom(samples, withCount: finalNumber)
         
         return compressedDecibelSamples
-    }}
+    }
+}
 
 // MARK: - Playback
 
