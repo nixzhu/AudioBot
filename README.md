@@ -20,13 +20,13 @@ See the demo.
 ### CocoaPods
 
 ```ruby
-pod 'AudioBot', '~> 0.3.0'
+pod 'AudioBot', '~> 0.3.1'
 ```
 
 ### Carthage
 
 ```ogdl
-github "nixzhu/AudioBot" >= 0.3.0
+github "nixzhu/AudioBot" >= 0.3.1
 ```
 
 ## Contact
