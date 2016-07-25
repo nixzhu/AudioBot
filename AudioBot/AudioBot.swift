@@ -6,6 +6,7 @@
 //  Copyright © 2015年 nixWork. All rights reserved.
 //
 
+import Foundation
 import AVFoundation
 
 public class AudioBot: NSObject {
@@ -36,6 +37,8 @@ public class AudioBot: NSObject {
         return sharedBot.audioPlayer?.url
     }
 
+    public static var reportRecordingDuration: ((duration: NSTimeInterval) -> Void)?
+
     private var recordingTimer: NSTimer?
     private var playingTimer: NSTimer?
 
@@ -55,6 +58,8 @@ public class AudioBot: NSObject {
     private var decibelSamples: [Float] = []
 
     private func clearForRecording() {
+
+        AudioBot.reportRecordingDuration = nil
 
         recordingTimer?.invalidate()
         recordingTimer = nil
@@ -178,6 +183,8 @@ public extension AudioBot {
         recordingPeriodicReport?.report(value: normalizedDecibel)
 
         decibelSamples.append(normalizedDecibel)
+
+        AudioBot.reportRecordingDuration?(duration: audioRecorder.currentTime)
     }
 
     public class func stopRecord(finish: (fileURL: NSURL, duration: NSTimeInterval, decibelSamples: [Float]) -> Void) {
