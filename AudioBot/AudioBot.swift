@@ -158,7 +158,7 @@ public extension AudioBot {
         sharedBot.recordingPeriodicReport = decibelSamplePeriodicReport
 
         let timeInterval = 1 / decibelSamplePeriodicReport.reportingFrequency
-        let timer = NSTimer.scheduledTimerWithTimeInterval(timeInterval, target: sharedBot, selector: "reportRecordingDecibel:", userInfo: nil, repeats: true)
+        let timer = NSTimer.scheduledTimerWithTimeInterval(timeInterval, target: sharedBot, selector: #selector(AudioBot.reportRecordingDecibel(_:)), userInfo: nil, repeats: true)
         sharedBot.recordingTimer?.invalidate()
         sharedBot.recordingTimer = timer
     }
@@ -200,14 +200,22 @@ public extension AudioBot {
         NSFileManager.audiobot_removeAudioAtFileURL(fileURL)
     }
 
-    public class func compressDecibelSamples(decibelSamples: [Float], withMaxNumberOfDecibelSamples maxNumberOfDecibelSamples: Int) -> [Float] {
+    public class func compressDecibelSamples(decibelSamples: [Float], withSamplingInterval samplingInterval: Int, maxNumberOfDecibelSamples: Int) -> [Float] {
 
         func f(x: Int, max: Int) -> Int {
             let n = 1 - 1 / exp(Double(x) / 100)
             return Int(Double(max) * n)
         }
 
-        let finalNumber = f(decibelSamples.count, max: maxNumberOfDecibelSamples)
+        let decibelSamples = sharedBot.decibelSamples
+        var samples: [Float] = []
+        var i = 0
+        while i < decibelSamples.count {
+            samples.append(decibelSamples[i])
+            i += samplingInterval
+        }
+
+        let finalNumber = f(samples.count, max: maxNumberOfDecibelSamples)
 
         func averageSamplingFrom(values: [Float], withCount count: Int) -> [Float] {
 
@@ -235,9 +243,9 @@ public extension AudioBot {
 
             return outputValues
         }
-
-        let compressedDecibelSamples = averageSamplingFrom(sharedBot.decibelSamples, withCount: finalNumber)
-
+        
+        let compressedDecibelSamples = averageSamplingFrom(samples, withCount: finalNumber)
+        
         return compressedDecibelSamples
     }
 }
@@ -287,7 +295,7 @@ public extension AudioBot {
         sharedBot.playingFinish = finish
 
         let timeInterval = 1 / progressPeriodicReport.reportingFrequency
-        let timer = NSTimer.scheduledTimerWithTimeInterval(timeInterval, target: sharedBot, selector: "reportPlayingProgress:", userInfo: nil, repeats: true)
+        let timer = NSTimer.scheduledTimerWithTimeInterval(timeInterval, target: sharedBot, selector: #selector(AudioBot.reportPlayingProgress(_:)), userInfo: nil, repeats: true)
         sharedBot.playingTimer?.invalidate()
         sharedBot.playingTimer = timer
     }
