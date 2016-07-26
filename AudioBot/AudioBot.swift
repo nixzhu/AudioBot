@@ -38,6 +38,7 @@ public class AudioBot: NSObject {
     }
 
     public static var reportRecordingDuration: ((duration: NSTimeInterval) -> Void)?
+    public static var reportPlayingDuration: ((duration: NSTimeInterval) -> Void)?
 
     private var recordingTimer: NSTimer?
     private var playingTimer: NSTimer?
@@ -70,6 +71,8 @@ public class AudioBot: NSObject {
     }
 
     private func clearForPlaying(finish finish: Bool) {
+
+        AudioBot.reportPlayingDuration = nil
 
         playingTimer?.invalidate()
         playingTimer = nil
@@ -267,9 +270,9 @@ public extension AudioBot {
 
             return outputValues
         }
-        
+
         let compressedDecibelSamples = averageSamplingFrom(samples, withCount: finalNumber)
-        
+
         return compressedDecibelSamples
     }
 }
@@ -333,6 +336,8 @@ public extension AudioBot {
         let progress = audioPlayer.currentTime / audioPlayer.duration
 
         playingPeriodicReport?.report(value: Float(progress))
+
+        AudioBot.reportPlayingDuration?(duration: audioPlayer.currentTime)
     }
 
     public class func pausePlay() {
