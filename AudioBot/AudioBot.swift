@@ -355,7 +355,7 @@ public extension AudioBot {
 
         sharedBot.audioPlayer?.stop()
 
-        sharedBot.playingFinish?(true)
+        sharedBot.playingFinish?(false)
         sharedBot.playingFinish = nil
 
         sharedBot.deactiveAudioSessionAndNotifyOthers()
