@@ -85,7 +85,7 @@ public class AudioBot: NSObject {
 
     private func deactiveAudioSessionAndNotifyOthers() {
 
-        let _ = try? AVAudioSession.sharedInstance().setActive(false, withOptions: .NotifyOthersOnDeactivation)
+        _ = try? AVAudioSession.sharedInstance().setActive(false, withOptions: .NotifyOthersOnDeactivation)
     }
 }
 
@@ -285,7 +285,7 @@ public extension AudioBot {
 
         stopRecord { _, _, _ in }
 
-        if AVAudioSession.sharedInstance().category != AVAudioSessionCategoryPlayback {
+        if !AVAudioSession.sharedInstance().audiobot_canPlay {
             do {
                 try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
                 try AVAudioSession.sharedInstance().setActive(true)
