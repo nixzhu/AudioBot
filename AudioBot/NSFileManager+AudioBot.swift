@@ -22,9 +22,11 @@ extension NSFileManager {
 
     class func audiobot_audioCachesURL() -> NSURL? {
 
-        let fileManager = NSFileManager.defaultManager()
+        guard let audioCachesURL = audiobot_cachesURL().URLByAppendingPathComponent("audiobot_audios", isDirectory: true) else {
+            return nil
+        }
 
-        let audioCachesURL = audiobot_cachesURL().URLByAppendingPathComponent("audiobot_audios", isDirectory: true)
+        let fileManager = NSFileManager.defaultManager()
 
         do {
             try fileManager.createDirectoryAtURL(audioCachesURL, withIntermediateDirectories: true, attributes: nil)
