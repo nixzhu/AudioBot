@@ -9,7 +9,7 @@ AudioBot helps you do audio record & playback.
 
 ## Requirements
 
-Swift 2.2, iOS 8.0
+Swift 2.3, iOS 8.0
 
 ## Usage
 
@@ -20,13 +20,13 @@ See the demo.
 ### CocoaPods
 
 ```ruby
-pod 'AudioBot', '~> 0.4.1'
+pod 'AudioBot', '~> 0.5.0'
 ```
 
 ### Carthage
 
 ```ogdl
-github "nixzhu/AudioBot" >= 0.4.1
+github "nixzhu/AudioBot" >= 0.5.0
 ```
 
 ## Contact
