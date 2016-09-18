@@ -19,25 +19,25 @@ class VoiceMemoCell: UITableViewCell {
         willSet {
             if newValue != playing {
                 if newValue {
-                    playButton.setImage(UIImage(named: "icon_pause"), forState: .Normal)
+                    playButton.setImage(UIImage(named: "icon_pause"), for: UIControlState())
                 } else {
-                    playButton.setImage(UIImage(named: "icon_play"), forState: .Normal)
+                    playButton.setImage(UIImage(named: "icon_play"), for: UIControlState())
                 }
             }
         }
     }
 
-    var playOrPauseAction: ((cell: VoiceMemoCell, progressView: UIProgressView) -> Void)?
+    var playOrPauseAction: ((_ cell: VoiceMemoCell, _ progressView: UIProgressView) -> Void)?
 
     override func awakeFromNib() {
         super.awakeFromNib()
     }
 
-    override func setSelected(selected: Bool, animated: Bool) {
+    override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
 
-    func configureWithVoiceMemo(voiceMemo: VoiceMemo) {
+    func configureWithVoiceMemo(_ voiceMemo: VoiceMemo) {
 
         playing = voiceMemo.playing
 
@@ -48,9 +48,9 @@ class VoiceMemoCell: UITableViewCell {
         progressView.progress = Float(voiceMemo.progress)
     }
 
-    @IBAction func playOrPause(sender: UIButton) {
+    @IBAction func playOrPause(_ sender: UIButton) {
 
-        playOrPauseAction?(cell: self, progressView: progressView)
+        playOrPauseAction?(self, progressView)
     }
 }
 

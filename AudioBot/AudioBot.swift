@@ -9,56 +9,56 @@
 import Foundation
 import AVFoundation
 
-public class AudioBot: NSObject {
+open class AudioBot: NSObject {
 
-    public static var mixWithOthersWhenRecording: Bool = false
+    open static var mixWithOthersWhenRecording: Bool = false
 
-    private override init() {
+    fileprivate override init() {
         super.init()
     }
-    private static let sharedBot = AudioBot()
+    fileprivate static let sharedBot = AudioBot()
 
-    private var audioRecorder: AVAudioRecorder?
-    private var audioPlayer: AVAudioPlayer?
+    fileprivate var audioRecorder: AVAudioRecorder?
+    fileprivate var audioPlayer: AVAudioPlayer?
 
-    public static var recording: Bool {
-        return sharedBot.audioRecorder?.recording ?? false
+    open static var recording: Bool {
+        return sharedBot.audioRecorder?.isRecording ?? false
     }
 
-    public static var recordingFileURL: NSURL? {
+    open static var recordingFileURL: URL? {
         return sharedBot.audioRecorder?.url
     }
 
-    public static var playing: Bool {
-        return sharedBot.audioPlayer?.playing ?? false
+    open static var playing: Bool {
+        return sharedBot.audioPlayer?.isPlaying ?? false
     }
 
-    public static var playingFileURL: NSURL? {
+    open static var playingFileURL: URL? {
         return sharedBot.audioPlayer?.url
     }
 
-    public static var reportRecordingDuration: ((duration: NSTimeInterval) -> Void)?
-    public static var reportPlayingDuration: ((duration: NSTimeInterval) -> Void)?
+    open static var reportRecordingDuration: ((_ duration: TimeInterval) -> Void)?
+    open static var reportPlayingDuration: ((_ duration: TimeInterval) -> Void)?
 
-    private var recordingTimer: NSTimer?
-    private var playingTimer: NSTimer?
+    fileprivate var recordingTimer: Timer?
+    fileprivate var playingTimer: Timer?
 
-    public enum Error: ErrorType {
+    public enum Error: Error {
 
-        case InvalidReportingFrequency
-        case NoFileURL
+        case invalidReportingFrequency
+        case noFileURL
     }
 
-    public typealias PeriodicReport = (reportingFrequency: NSTimeInterval, report: (value: Float) -> Void)
+    public typealias PeriodicReport = (reportingFrequency: TimeInterval, report: (_ value: Float) -> Void)
 
-    private var recordingPeriodicReport: PeriodicReport?
-    private var playingPeriodicReport: PeriodicReport?
+    fileprivate var recordingPeriodicReport: PeriodicReport?
+    fileprivate var playingPeriodicReport: PeriodicReport?
 
-    private var playingFinish: (Bool -> Void)?
+    fileprivate var playingFinish: ((Bool) -> Void)?
 
-    private var decibelSamples: [Float] = []
+    fileprivate var decibelSamples: [Float] = []
 
-    private func clearForRecording() {
+    fileprivate func clearForRecording() {
 
         AudioBot.reportRecordingDuration = nil
 
@@ -70,7 +70,7 @@ public class AudioBot: NSObject {
         decibelSamples = []
     }
 
-    private func clearForPlaying(finish finish: Bool) {
+    fileprivate func clearForPlaying(finish: Bool) {
 
         AudioBot.reportPlayingDuration = nil
 
@@ -78,14 +78,14 @@ public class AudioBot: NSObject {
         playingTimer = nil
 
         if finish {
-            playingPeriodicReport?.report(value: 0)
+            playingPeriodicReport?.report(0)
         }
         playingPeriodicReport = nil
     }
 
-    private func deactiveAudioSessionAndNotifyOthers() {
+    fileprivate func deactiveAudioSessionAndNotifyOthers() {
 
-        _ = try? AVAudioSession.sharedInstance().setActive(false, withOptions: .NotifyOthersOnDeactivation)
+        _ = try? AVAudioSession.sharedInstance().setActive(false, with: .notifyOthersOnDeactivation)
     }
 }
 
@@ -95,35 +95,35 @@ public extension AudioBot {
 
     public enum Usage {
 
-        case Normal
-        case Custom(settings: [String: AnyObject])
+        case normal
+        case custom(settings: [String: AnyObject])
 
         var settings: [String: AnyObject] {
 
             switch self {
 
-            case .Normal:
+            case .normal:
                 return [
-                    AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
-                    AVEncoderAudioQualityKey : AVAudioQuality.Medium.rawValue,
-                    AVEncoderBitRateKey : 64000,
-                    AVNumberOfChannelsKey: 2,
-                    AVSampleRateKey : 44100.0
+                    AVFormatIDKey: Int(kAudioFormatMPEG4AAC) as AnyObject,
+                    AVEncoderAudioQualityKey : AVAudioQuality.medium.rawValue as AnyObject,
+                    AVEncoderBitRateKey : 64000 as AnyObject,
+                    AVNumberOfChannelsKey: 2 as AnyObject,
+                    AVSampleRateKey : 44100.0 as AnyObject
                 ]
 
-            case .Custom(let settings):
+            case .custom(let settings):
                 return settings
             }
         }
     }
 
-    public class func startRecordAudioToFileURL(fileURL: NSURL?, forUsage usage: Usage, withDecibelSamplePeriodicReport decibelSamplePeriodicReport: PeriodicReport) throws {
+    public class func startRecordAudioToFileURL(_ fileURL: URL?, forUsage usage: Usage, withDecibelSamplePeriodicReport decibelSamplePeriodicReport: PeriodicReport) throws {
 
         stopPlay()
 
         do {
             if mixWithOthersWhenRecording {
-                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayAndRecord, withOptions: [.MixWithOthers, .DefaultToSpeaker])
+                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayAndRecord, with: [.mixWithOthers, .defaultToSpeaker])
             } else {
                 try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryRecord)
             }
@@ -134,29 +134,29 @@ public extension AudioBot {
             throw error
         }
 
-        if let audioRecorder = sharedBot.audioRecorder where audioRecorder.recording {
+        if let audioRecorder = sharedBot.audioRecorder , audioRecorder.isRecording {
 
             audioRecorder.stop()
 
             // TODO: delete previews record file?
         }
 
-        guard let fileURL = (fileURL ?? NSFileManager.audiobot_audioFileURLWithName(NSUUID().UUIDString)) else {
-            throw Error.NoFileURL
+        guard let fileURL = (fileURL ?? FileManager.audiobot_audioFileURLWithName(UUID().uuidString)) else {
+            throw Error.noFileURL
         }
 
         guard decibelSamplePeriodicReport.reportingFrequency > 0 else {
-            throw Error.InvalidReportingFrequency
+            throw Error.invalidReportingFrequency
         }
 
         let settings = usage.settings
 
         do {
-            let audioRecorder = try AVAudioRecorder(URL: fileURL, settings: settings)
+            let audioRecorder = try AVAudioRecorder(url: fileURL, settings: settings)
             sharedBot.audioRecorder = audioRecorder
 
             audioRecorder.delegate = sharedBot
-            audioRecorder.meteringEnabled = true
+            audioRecorder.isMeteringEnabled = true
             audioRecorder.prepareToRecord()
 
         } catch let error {
@@ -168,12 +168,12 @@ public extension AudioBot {
         sharedBot.recordingPeriodicReport = decibelSamplePeriodicReport
 
         let timeInterval = 1 / decibelSamplePeriodicReport.reportingFrequency
-        let timer = NSTimer.scheduledTimerWithTimeInterval(timeInterval, target: sharedBot, selector: #selector(AudioBot.reportRecordingDecibel(_:)), userInfo: nil, repeats: true)
+        let timer = Timer.scheduledTimer(timeInterval: timeInterval, target: sharedBot, selector: #selector(AudioBot.reportRecordingDecibel(_:)), userInfo: nil, repeats: true)
         sharedBot.recordingTimer?.invalidate()
         sharedBot.recordingTimer = timer
     }
 
-    @objc private func reportRecordingDecibel(sender: NSTimer) {
+    @objc fileprivate func reportRecordingDecibel(_ sender: Timer) {
 
         guard let audioRecorder = audioRecorder else {
             return
@@ -181,22 +181,22 @@ public extension AudioBot {
 
         audioRecorder.updateMeters()
 
-        let normalizedDecibel = pow(10, audioRecorder.averagePowerForChannel(0) * 0.05)
+        let normalizedDecibel = pow(10, audioRecorder.averagePower(forChannel: 0) * 0.05)
 
-        recordingPeriodicReport?.report(value: normalizedDecibel)
+        recordingPeriodicReport?.report(normalizedDecibel)
 
         decibelSamples.append(normalizedDecibel)
 
-        AudioBot.reportRecordingDuration?(duration: audioRecorder.currentTime)
+        AudioBot.reportRecordingDuration?(audioRecorder.currentTime)
     }
 
-    public class func stopRecord(finish: (fileURL: NSURL, duration: NSTimeInterval, decibelSamples: [Float]) -> Void) {
+    public class func stopRecord(_ finish: (_ fileURL: URL, _ duration: TimeInterval, _ decibelSamples: [Float]) -> Void) {
 
         defer {
             sharedBot.clearForRecording()
         }
 
-        guard let audioRecorder = sharedBot.audioRecorder where audioRecorder.recording else {
+        guard let audioRecorder = sharedBot.audioRecorder , audioRecorder.isRecording else {
             return
         }
 
@@ -204,15 +204,15 @@ public extension AudioBot {
 
         audioRecorder.stop()
 
-        finish(fileURL: audioRecorder.url, duration: duration, decibelSamples: sharedBot.decibelSamples)
+        finish(audioRecorder.url, duration, sharedBot.decibelSamples)
     }
 
-    public class func removeAudioAtFileURL(fileURL: NSURL) {
+    public class func removeAudioAtFileURL(_ fileURL: URL) {
 
-        NSFileManager.audiobot_removeAudioAtFileURL(fileURL)
+        FileManager.audiobot_removeAudioAtFileURL(fileURL)
     }
 
-    public class func compressDecibelSamples(decibelSamples: [Float], withSamplingInterval samplingInterval: Int, minNumberOfDecibelSamples: Int, maxNumberOfDecibelSamples: Int) -> [Float] {
+    public class func compressDecibelSamples(_ decibelSamples: [Float], withSamplingInterval samplingInterval: Int, minNumberOfDecibelSamples: Int, maxNumberOfDecibelSamples: Int) -> [Float] {
 
         guard samplingInterval > 0 else {
             fatalError("Invlid samplingInterval!")
@@ -229,7 +229,7 @@ public extension AudioBot {
             return decibelSamples
         }
 
-        func f(x: Int, max: Int) -> Int {
+        func f(_ x: Int, max: Int) -> Int {
             let n = 1 - 1 / exp(Double(x) / 100)
             return Int(Double(max) * n)
         }
@@ -244,7 +244,7 @@ public extension AudioBot {
 
         let finalNumber = f(samples.count, max: maxNumberOfDecibelSamples)
 
-        func averageSamplingFrom(values: [Float], withCount count: Int) -> [Float] {
+        func averageSamplingFrom(_ values: [Float], withCount count: Int) -> [Float] {
 
             let step = Double(values.count) / Double(count)
 
@@ -281,7 +281,7 @@ public extension AudioBot {
 
 public extension AudioBot {
 
-    public class func startPlayAudioAtFileURL(fileURL: NSURL, fromTime: NSTimeInterval, withProgressPeriodicReport progressPeriodicReport: PeriodicReport, finish: Bool -> Void) throws {
+    public class func startPlayAudioAtFileURL(_ fileURL: URL, fromTime: TimeInterval, withProgressPeriodicReport progressPeriodicReport: PeriodicReport, finish: @escaping (Bool) -> Void) throws {
 
         stopRecord { _, _, _ in }
 
@@ -295,17 +295,17 @@ public extension AudioBot {
         }
 
         guard progressPeriodicReport.reportingFrequency > 0 else {
-            throw Error.InvalidReportingFrequency
+            throw Error.invalidReportingFrequency
         }
 
-        if let audioPlayer = sharedBot.audioPlayer where audioPlayer.url == fileURL {
+        if let audioPlayer = sharedBot.audioPlayer , audioPlayer.url == fileURL {
             audioPlayer.play()
 
         } else {
             sharedBot.audioPlayer?.pause()
 
             do {
-                let audioPlayer = try AVAudioPlayer(contentsOfURL: fileURL)
+                let audioPlayer = try AVAudioPlayer(contentsOf: fileURL)
                 sharedBot.audioPlayer = audioPlayer
 
                 audioPlayer.delegate = sharedBot
@@ -322,12 +322,12 @@ public extension AudioBot {
         sharedBot.playingFinish = finish
 
         let timeInterval = 1 / progressPeriodicReport.reportingFrequency
-        let timer = NSTimer.scheduledTimerWithTimeInterval(timeInterval, target: sharedBot, selector: #selector(AudioBot.reportPlayingProgress(_:)), userInfo: nil, repeats: true)
+        let timer = Timer.scheduledTimer(timeInterval: timeInterval, target: sharedBot, selector: #selector(AudioBot.reportPlayingProgress(_:)), userInfo: nil, repeats: true)
         sharedBot.playingTimer?.invalidate()
         sharedBot.playingTimer = timer
     }
 
-    @objc private func reportPlayingProgress(sender: NSTimer) {
+    @objc fileprivate func reportPlayingProgress(_ sender: Timer) {
 
         guard let audioPlayer = audioPlayer else {
             return
@@ -335,9 +335,9 @@ public extension AudioBot {
 
         let progress = audioPlayer.currentTime / audioPlayer.duration
 
-        playingPeriodicReport?.report(value: Float(progress))
+        playingPeriodicReport?.report(Float(progress))
 
-        AudioBot.reportPlayingDuration?(duration: audioPlayer.currentTime)
+        AudioBot.reportPlayingDuration?(audioPlayer.currentTime)
     }
 
     public class func pausePlay() {
@@ -366,12 +366,12 @@ public extension AudioBot {
 
 extension AudioBot: AVAudioRecorderDelegate {
 
-    public func audioRecorderDidFinishRecording(recorder: AVAudioRecorder, successfully flag: Bool) {
+    public func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
 
         print("AudioBot audioRecorderDidFinishRecording: \(flag)")
     }
 
-    public func audioRecorderEncodeErrorDidOccur(recorder: AVAudioRecorder, error: NSError?) {
+    public func audioRecorderEncodeErrorDidOccur(_ recorder: AVAudioRecorder, error: Error?) {
 
         print("AudioBot audioRecorderEncodeErrorDidOccur: \(error)")
 
@@ -387,7 +387,7 @@ extension AudioBot: AVAudioRecorderDelegate {
 
 extension AudioBot: AVAudioPlayerDelegate {
 
-    public func audioPlayerDidFinishPlaying(player: AVAudioPlayer, successfully flag: Bool) {
+    public func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
 
         print("AudioBot audioPlayerDidFinishPlaying: \(flag)")
 
@@ -398,7 +398,7 @@ extension AudioBot: AVAudioPlayerDelegate {
         deactiveAudioSessionAndNotifyOthers()
     }
 
-    public func audioPlayerDecodeErrorDidOccur(player: AVAudioPlayer, error: NSError?) {
+    public func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
 
         print("AudioBot audioPlayerDecodeErrorDidOccur: \(error)")
 

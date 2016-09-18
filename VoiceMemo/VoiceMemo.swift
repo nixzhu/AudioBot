@@ -10,15 +10,15 @@ import UIKit
 
 class VoiceMemo {
 
-    let fileURL: NSURL
-    var duration: NSTimeInterval
+    let fileURL: URL
+    var duration: TimeInterval
 
     var progress: CGFloat = 0
     var playing: Bool = false
 
-    let createdAt: NSDate = NSDate()
+    let createdAt: Date = Date()
 
-    init(fileURL: NSURL, duration: NSTimeInterval) {
+    init(fileURL: URL, duration: TimeInterval) {
         self.fileURL = fileURL
         self.duration = duration
     }

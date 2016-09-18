@@ -8,28 +8,28 @@
 
 import Foundation
 
-extension NSFileManager {
+extension FileManager {
 
-    class func audiobot_cachesURL() -> NSURL {
+    class func audiobot_cachesURL() -> URL {
 
         do {
-            return try NSFileManager.defaultManager().URLForDirectory(.CachesDirectory, inDomain: .UserDomainMask, appropriateForURL: nil, create: false)
+            return try FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
 
         } catch let error {
             fatalError("AudioBot: \(error)")
         }
     }
 
-    class func audiobot_audioCachesURL() -> NSURL? {
+    class func audiobot_audioCachesURL() -> URL? {
 
-        guard let audioCachesURL = audiobot_cachesURL().URLByAppendingPathComponent("audiobot_audios", isDirectory: true) else {
+        guard let audioCachesURL = audiobot_cachesURL().appendingPathComponent("audiobot_audios", isDirectory: true) else {
             return nil
         }
 
-        let fileManager = NSFileManager.defaultManager()
+        let fileManager = FileManager.default
 
         do {
-            try fileManager.createDirectoryAtURL(audioCachesURL, withIntermediateDirectories: true, attributes: nil)
+            try fileManager.createDirectory(at: audioCachesURL, withIntermediateDirectories: true, attributes: nil)
             return audioCachesURL
 
         } catch let error {
@@ -39,19 +39,19 @@ extension NSFileManager {
         return nil
     }
 
-    class func audiobot_audioFileURLWithName(name: String) -> NSURL? {
+    class func audiobot_audioFileURLWithName(_ name: String) -> URL? {
 
         if let audioCachesURL = audiobot_audioCachesURL() {
-            return audioCachesURL.URLByAppendingPathComponent("\(name).m4a")
+            return audioCachesURL.appendingPathComponent("\(name).m4a")
         }
 
         return nil
     }
 
-    class func audiobot_removeAudioAtFileURL(fileURL: NSURL) {
+    class func audiobot_removeAudioAtFileURL(_ fileURL: URL) {
 
         do {
-            try NSFileManager.defaultManager().removeItemAtURL(fileURL)
+            try FileManager.default.removeItem(at: fileURL)
 
         } catch let error {
             print("AudioBot: \(error)")

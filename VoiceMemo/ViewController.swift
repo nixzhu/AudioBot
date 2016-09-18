@@ -21,7 +21,7 @@ class ViewController: UIViewController {
 
     var voiceMemos: [VoiceMemo] = []
 
-    @IBAction func record(sender: UIButton) {
+    @IBAction func record(_ sender: UIButton) {
 
         if AudioBot.recording {
 
@@ -37,7 +37,7 @@ class ViewController: UIViewController {
                 self?.voiceMemosTableView.reloadData()
             }
 
-            recordButton.appearance = .Default
+            recordButton.appearance = .default
 
         } else {
             do {
@@ -46,9 +46,9 @@ class ViewController: UIViewController {
                 })
 
                 AudioBot.mixWithOthersWhenRecording = true
-                try AudioBot.startRecordAudioToFileURL(nil, forUsage: .Normal, withDecibelSamplePeriodicReport: decibelSamplePeriodicReport)
+                try AudioBot.startRecordAudioToFileURL(nil, forUsage: .normal, withDecibelSamplePeriodicReport: decibelSamplePeriodicReport)
 
-                recordButton.appearance = .Recording
+                recordButton.appearance = .recording
                 
             } catch let error {
                 print("record error: \(error)")
@@ -59,26 +59,26 @@ class ViewController: UIViewController {
 
 extension ViewController: UITableViewDataSource, UITableViewDelegate {
 
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
 
         return 1
     }
 
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 
         return voiceMemos.count
     }
 
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        let cell = tableView.dequeueReusableCellWithIdentifier("VoiceMemoCell") as! VoiceMemoCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "VoiceMemoCell") as! VoiceMemoCell
         return cell
     }
 
-    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
 
         if let cell = cell as? VoiceMemoCell {
-            let voiceMemo = voiceMemos[indexPath.row]
+            let voiceMemo = voiceMemos[(indexPath as NSIndexPath).row]
             cell.configureWithVoiceMemo(voiceMemo)
 
             cell.playOrPauseAction = { [weak self] cell, progressView in
@@ -94,7 +94,7 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
                             progressView.progress = progress
                         })
 
-                        let fromTime = NSTimeInterval(voiceMemo.progress) * voiceMemo.duration
+                        let fromTime = TimeInterval(voiceMemo.progress) * voiceMemo.duration
                         try AudioBot.startPlayAudioAtFileURL(voiceMemo.fileURL, fromTime: fromTime, withProgressPeriodicReport: progressPeriodicReport, finish: { success in
 
                             voiceMemo.playing = false
@@ -116,8 +116,8 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
                         for index in 0..<(strongSelf.voiceMemos).count {
                             let voiceMemo = strongSelf.voiceMemos[index]
                             if AudioBot.playingFileURL == voiceMemo.fileURL {
-                                let indexPath = NSIndexPath(forRow: index, inSection: 0)
-                                if let cell = tableView.cellForRowAtIndexPath(indexPath) as? VoiceMemoCell {
+                                let indexPath = IndexPath(row: index, section: 0)
+                                if let cell = tableView.cellForRow(at: indexPath) as? VoiceMemoCell {
                                     voiceMemo.playing = false
                                     cell.playing = false
                                 }
