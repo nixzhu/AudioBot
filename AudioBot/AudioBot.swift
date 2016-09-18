@@ -9,6 +9,12 @@
 import Foundation
 import AVFoundation
 
+public enum AudioBotError: Error {
+
+    case invalidReportingFrequency
+    case noFileURL
+}
+
 open class AudioBot: NSObject {
 
     open static var mixWithOthersWhenRecording: Bool = false
@@ -42,12 +48,6 @@ open class AudioBot: NSObject {
 
     fileprivate var recordingTimer: Timer?
     fileprivate var playingTimer: Timer?
-
-    public enum Error: Error {
-
-        case invalidReportingFrequency
-        case noFileURL
-    }
 
     public typealias PeriodicReport = (reportingFrequency: TimeInterval, report: (_ value: Float) -> Void)
 
@@ -142,11 +142,11 @@ public extension AudioBot {
         }
 
         guard let fileURL = (fileURL ?? FileManager.audiobot_audioFileURLWithName(UUID().uuidString)) else {
-            throw Error.noFileURL
+            throw AudioBotError.noFileURL
         }
 
         guard decibelSamplePeriodicReport.reportingFrequency > 0 else {
-            throw Error.invalidReportingFrequency
+            throw AudioBotError.invalidReportingFrequency
         }
 
         let settings = usage.settings
@@ -295,7 +295,7 @@ public extension AudioBot {
         }
 
         guard progressPeriodicReport.reportingFrequency > 0 else {
-            throw Error.invalidReportingFrequency
+            throw AudioBotError.invalidReportingFrequency
         }
 
         if let audioPlayer = sharedBot.audioPlayer , audioPlayer.url == fileURL {

@@ -22,9 +22,7 @@ extension FileManager {
 
     class func audiobot_audioCachesURL() -> URL? {
 
-        guard let audioCachesURL = audiobot_cachesURL().appendingPathComponent("audiobot_audios", isDirectory: true) else {
-            return nil
-        }
+        let audioCachesURL = audiobot_cachesURL().appendingPathComponent("audiobot_audios", isDirectory: true)
 
         let fileManager = FileManager.default
 
