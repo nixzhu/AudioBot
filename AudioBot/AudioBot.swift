@@ -15,36 +15,37 @@ public enum AudioBotError: Error {
     case noFileURL
 }
 
-open class AudioBot: NSObject {
+final public class AudioBot: NSObject {
 
-    open static var mixWithOthersWhenRecording: Bool = false
+    public static var mixWithOthersWhenRecording: Bool = false
+
+    fileprivate static let sharedBot = AudioBot()
 
     fileprivate override init() {
         super.init()
     }
-    fileprivate static let sharedBot = AudioBot()
 
     fileprivate var audioRecorder: AVAudioRecorder?
     fileprivate var audioPlayer: AVAudioPlayer?
 
-    open static var recording: Bool {
+    public static var recording: Bool {
         return sharedBot.audioRecorder?.isRecording ?? false
     }
 
-    open static var recordingFileURL: URL? {
+    public static var recordingFileURL: URL? {
         return sharedBot.audioRecorder?.url
     }
 
-    open static var playing: Bool {
+    public static var playing: Bool {
         return sharedBot.audioPlayer?.isPlaying ?? false
     }
 
-    open static var playingFileURL: URL? {
+    public static var playingFileURL: URL? {
         return sharedBot.audioPlayer?.url
     }
 
-    open static var reportRecordingDuration: ((_ duration: TimeInterval) -> Void)?
-    open static var reportPlayingDuration: ((_ duration: TimeInterval) -> Void)?
+    public static var reportRecordingDuration: ((_ duration: TimeInterval) -> Void)?
+    public static var reportPlayingDuration: ((_ duration: TimeInterval) -> Void)?
 
     fileprivate var recordingTimer: Timer?
     fileprivate var playingTimer: Timer?
