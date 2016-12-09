@@ -169,9 +169,11 @@ public extension AudioBot {
         sharedBot.recordingPeriodicReport = decibelSamplePeriodicReport
 
         let timeInterval = 1 / decibelSamplePeriodicReport.reportingFrequency
-        let timer = Timer.scheduledTimer(timeInterval: timeInterval, target: sharedBot, selector: #selector(AudioBot.reportRecordingDecibel(_:)), userInfo: nil, repeats: true)
-        sharedBot.recordingTimer?.invalidate()
-        sharedBot.recordingTimer = timer
+        DispatchQueue.main.async {
+            let timer = Timer.scheduledTimer(timeInterval: timeInterval, target: sharedBot, selector: #selector(AudioBot.reportRecordingDecibel(_:)), userInfo: nil, repeats: true)
+            sharedBot.recordingTimer?.invalidate()
+            sharedBot.recordingTimer = timer
+        }
     }
 
     @objc fileprivate func reportRecordingDecibel(_ sender: Timer) {
@@ -323,9 +325,11 @@ public extension AudioBot {
         sharedBot.playingFinish = finish
 
         let timeInterval = 1 / progressPeriodicReport.reportingFrequency
-        let timer = Timer.scheduledTimer(timeInterval: timeInterval, target: sharedBot, selector: #selector(AudioBot.reportPlayingProgress(_:)), userInfo: nil, repeats: true)
-        sharedBot.playingTimer?.invalidate()
-        sharedBot.playingTimer = timer
+        DispatchQueue.main.async {
+            let timer = Timer.scheduledTimer(timeInterval: timeInterval, target: sharedBot, selector: #selector(AudioBot.reportPlayingProgress(_:)), userInfo: nil, repeats: true)
+            sharedBot.playingTimer?.invalidate()
+            sharedBot.playingTimer = timer
+        }
     }
 
     @objc fileprivate func reportPlayingProgress(_ sender: Timer) {
