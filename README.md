@@ -22,13 +22,13 @@ See the demo.
 ### Carthage
 
 ```ogdl
-github "nixzhu/AudioBot" >= 1.0.1
+github "nixzhu/AudioBot" >= 1.1.0
 ```
 
 ### CocoaPods
 
 ```ruby
-pod 'AudioBot', '~> 1.0.1'
+pod 'AudioBot', '~> 1.1.0'
 ```
 
 ## Contact
