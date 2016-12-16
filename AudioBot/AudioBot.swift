@@ -27,9 +27,7 @@ final public class AudioBot: NSObject {
 
     fileprivate lazy var normalAudioRecorder: AVAudioRecorder = {
         let fileURL = FileManager.audiobot_audioFileURLWithName(UUID().uuidString)!
-        let recorder = try! AVAudioRecorder(url: fileURL, settings: Usage.normal.settings)
-        recorder.prepareToRecord()
-        return recorder
+        return try! AVAudioRecorder(url: fileURL, settings: Usage.normal.settings)
     }()
 
     fileprivate var audioRecorder: AVAudioRecorder?
@@ -100,6 +98,13 @@ final public class AudioBot: NSObject {
 // MARK: - Record
 
 public extension AudioBot {
+
+    public class func prepareForNormalRecord() {
+
+        DispatchQueue.global(qos: .utility).async {
+            sharedBot.normalAudioRecorder.prepareToRecord()
+        }
+    }
 
     public enum Usage {
 
@@ -173,7 +178,6 @@ public extension AudioBot {
             sharedBot.audioRecorder = audioRecorder
             audioRecorder.delegate = sharedBot
             audioRecorder.isMeteringEnabled = true
-            audioRecorder.prepareToRecord()
         } catch let error {
             throw error
         }
