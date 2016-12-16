@@ -123,10 +123,16 @@ public extension AudioBot {
         stopPlay()
 
         do {
+            let session = AVAudioSession.sharedInstance()
             if mixWithOthersWhenRecording {
-                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayAndRecord, with: [.mixWithOthers, .defaultToSpeaker])
+                let categoryOptions: AVAudioSessionCategoryOptions = [.mixWithOthers, .defaultToSpeaker]
+                if session.category != AVAudioSessionCategoryPlayAndRecord || session.categoryOptions != categoryOptions {
+                    try session.setCategory(AVAudioSessionCategoryPlayAndRecord, with: categoryOptions)
+                }
             } else {
-                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryRecord)
+                if session.category != AVAudioSessionCategoryRecord {
+                    try session.setCategory(AVAudioSessionCategoryRecord)
+                }
             }
 
             try AVAudioSession.sharedInstance().setActive(true)
