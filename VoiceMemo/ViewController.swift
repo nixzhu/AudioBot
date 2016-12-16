@@ -46,7 +46,7 @@ class ViewController: UIViewController {
                 })
 
                 AudioBot.mixWithOthersWhenRecording = true
-                try AudioBot.startRecordAudioToFileURL(nil, forUsage: .normal, withDecibelSamplePeriodicReport: decibelSamplePeriodicReport)
+                try AudioBot.startRecordAudio(forUsage: .normal, withDecibelSamplePeriodicReport: decibelSamplePeriodicReport)
 
                 recordButton.appearance = .recording
                 

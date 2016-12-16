@@ -25,6 +25,13 @@ final public class AudioBot: NSObject {
         super.init()
     }
 
+    fileprivate lazy var normalAudioRecorder: AVAudioRecorder = {
+        let fileURL = FileManager.audiobot_audioFileURLWithName(UUID().uuidString)!
+        let recorder = try! AVAudioRecorder(url: fileURL, settings: Usage.normal.settings)
+        recorder.prepareToRecord()
+        return recorder
+    }()
+
     fileprivate var audioRecorder: AVAudioRecorder?
     fileprivate var audioPlayer: AVAudioPlayer?
 
@@ -97,7 +104,7 @@ public extension AudioBot {
     public enum Usage {
 
         case normal
-        case custom(settings: [String: AnyObject])
+        case custom(fileURL: URL?, settings: [String: AnyObject])
 
         var settings: [String: AnyObject] {
 
@@ -112,13 +119,13 @@ public extension AudioBot {
                     AVSampleRateKey : 44100.0 as AnyObject
                 ]
 
-            case .custom(let settings):
+            case .custom(_, let settings):
                 return settings
             }
         }
     }
 
-    public class func startRecordAudioToFileURL(_ fileURL: URL?, forUsage usage: Usage, withDecibelSamplePeriodicReport decibelSamplePeriodicReport: PeriodicReport) throws {
+    public class func startRecordAudio(forUsage usage: Usage, withDecibelSamplePeriodicReport decibelSamplePeriodicReport: PeriodicReport) throws {
 
         stopPlay()
 
@@ -143,28 +150,30 @@ public extension AudioBot {
         if let audioRecorder = sharedBot.audioRecorder , audioRecorder.isRecording {
 
             audioRecorder.stop()
+            audioRecorder.deleteRecording()
 
             // TODO: delete previews record file?
-        }
-
-        guard let fileURL = (fileURL ?? FileManager.audiobot_audioFileURLWithName(UUID().uuidString)) else {
-            throw AudioBotError.noFileURL
         }
 
         guard decibelSamplePeriodicReport.reportingFrequency > 0 else {
             throw AudioBotError.invalidReportingFrequency
         }
 
-        let settings = usage.settings
-
         do {
-            let audioRecorder = try AVAudioRecorder(url: fileURL, settings: settings)
+            let audioRecorder: AVAudioRecorder
+            switch usage {
+            case .normal:
+                audioRecorder = sharedBot.normalAudioRecorder
+            case .custom(let fileURL, let settings):
+                guard let fileURL = (fileURL ?? FileManager.audiobot_audioFileURLWithName(UUID().uuidString)) else {
+                    throw AudioBotError.noFileURL
+                }
+                audioRecorder = try AVAudioRecorder(url: fileURL, settings: settings)
+            }
             sharedBot.audioRecorder = audioRecorder
-
             audioRecorder.delegate = sharedBot
             audioRecorder.isMeteringEnabled = true
             audioRecorder.prepareToRecord()
-
         } catch let error {
             throw error
         }
