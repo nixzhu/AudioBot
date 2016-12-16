@@ -134,8 +134,7 @@ public extension AudioBot {
                     try session.setCategory(AVAudioSessionCategoryRecord)
                 }
             }
-
-            try AVAudioSession.sharedInstance().setActive(true)
+            try session.setActive(true)
 
         } catch let error {
             throw error
@@ -294,10 +293,11 @@ public extension AudioBot {
 
         stopRecord { _, _, _ in }
 
-        if !AVAudioSession.sharedInstance().audiobot_canPlay {
+        let session = AVAudioSession.sharedInstance()
+        if !session.audiobot_canPlay {
             do {
-                try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
-                try AVAudioSession.sharedInstance().setActive(true)
+                try session.setCategory(AVAudioSessionCategoryPlayback)
+                try session.setActive(true)
             } catch let error {
                 throw error
             }
