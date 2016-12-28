@@ -15,6 +15,13 @@ public enum AudioBotError: Error {
     case noFileURL
 }
 
+public final class VAD: NSObject {
+    public var longestTime: TimeInterval   = 30.0
+    public var spaceTime: TimeInterval     = 2.0
+    public var silenceTime: TimeInterval   = 0.5
+    public var silenceVolume: Float        = 0.1
+}
+
 final public class AudioBot: NSObject {
 
     public static var mixWithOthersWhenRecording: Bool = false
@@ -55,7 +62,10 @@ final public class AudioBot: NSObject {
     fileprivate var recordingTimer: Timer?
     fileprivate var playingTimer: Timer?
 
+    fileprivate var automaticRecordEnable = false
+    
     public typealias PeriodicReport = (reportingFrequency: TimeInterval, report: (_ value: Float) -> Void)
+    public typealias ResultReport = ((_ fileURL: URL, _ duration: TimeInterval, _ decibelSamples: [Float]) -> Void)
 
     fileprivate var recordingPeriodicReport: PeriodicReport?
     fileprivate var playingPeriodicReport: PeriodicReport?
@@ -211,7 +221,7 @@ public extension AudioBot {
         AudioBot.reportRecordingDuration?(audioRecorder.currentTime)
     }
 
-    public class func stopRecord(_ finish: (_ fileURL: URL, _ duration: TimeInterval, _ decibelSamples: [Float]) -> Void) {
+    public class func stopRecord(_ finish: ResultReport?) {
 
         defer {
             sharedBot.clearForRecording()
@@ -224,7 +234,11 @@ public extension AudioBot {
         let duration = audioRecorder.currentTime
 
         audioRecorder.stop()
-
+        
+        guard let finish = finish else {
+            return
+        }
+        
         finish(audioRecorder.url, duration, sharedBot.decibelSamples)
     }
 
@@ -296,6 +310,64 @@ public extension AudioBot {
 
         return compressedDecibelSamples
     }
+}
+
+// MARK: - AutomaticRecord
+
+extension AudioBot {
+    public class func startAutomaticRecordAudio(forUsage usage: Usage, withVADSetting setting :VAD, withDecibelSamplePeriodicReport decibelSamplePeriodicReport: PeriodicReport, withRecordResultReport recordResultReport: @escaping ResultReport) throws {
+        do {
+            
+            sharedBot.automaticRecordEnable = true
+            
+            var isValid = false
+            var count = 0
+            let activeCount = Int(decibelSamplePeriodicReport.reportingFrequency * setting.silenceTime)
+            let decibelPeriodicReport: AudioBot.PeriodicReport = (reportingFrequency: decibelSamplePeriodicReport.reportingFrequency, report: { decibelSample in
+                decibelSamplePeriodicReport.report(decibelSample)
+                
+                if decibelSample > setting.silenceVolume {
+                    isValid = true
+                    count = 0
+                }else if isValid {
+                    count += 1
+                }
+                
+                if count > activeCount, isValid {
+                    stopRecord({ (fileURL, duration, decibelSamples) in
+                        recordResultReport(fileURL, duration, decibelSamples)
+                    })
+                    
+                    if !sharedBot.automaticRecordEnable { return }
+                    
+                    try! startAutomaticRecordAudio(forUsage: usage, withVADSetting: setting, withDecibelSamplePeriodicReport: decibelSamplePeriodicReport, withRecordResultReport: recordResultReport)
+                }
+            })
+            try startRecordAudio(forUsage: usage, withDecibelSamplePeriodicReport: decibelPeriodicReport)
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + setting.spaceTime, execute: {
+                if !isValid {
+                    stopRecord(nil)
+                    
+                    if !sharedBot.automaticRecordEnable { return }
+                    
+                    try! startAutomaticRecordAudio(forUsage: usage, withVADSetting: setting, withDecibelSamplePeriodicReport: decibelSamplePeriodicReport, withRecordResultReport: recordResultReport)
+                    
+                }
+                
+            })
+            
+        }
+        catch let error {
+            throw error
+        }
+    }
+    
+    public class func stopAutomaticRecord() {
+        stopRecord(nil)
+        sharedBot.automaticRecordEnable = false
+    }
+    
 }
 
 // MARK: - Playback

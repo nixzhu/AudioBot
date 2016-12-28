@@ -37,8 +37,6 @@ class ViewController: UIViewController {
 
     @IBAction func modeChangeAction(_ sender: Any) {
         
-        self.record(recordButton)
-
         let startConstant: CGFloat = 0
         let endConstant: CGFloat = -128.0
         let animationDuration: TimeInterval = 0.3
@@ -65,7 +63,24 @@ class ViewController: UIViewController {
                 })
                 
                 AudioBot.mixWithOthersWhenRecording = true
-                try AudioBot.startRecordAudio(forUsage: .normal, withDecibelSamplePeriodicReport: decibelSamplePeriodicReport)
+                
+                let setting = VAD()
+                setting.silenceTime = 0.75
+                setting.silenceVolume = 0.05
+                
+                try AudioBot.startAutomaticRecordAudio(forUsage: .normal, withVADSetting: setting, withDecibelSamplePeriodicReport: decibelSamplePeriodicReport, withRecordResultReport: { [weak self] (fileURL, duration, decibelSamples) in
+                    print("fileURL: \(fileURL)")
+                    print("duration: \(duration)")
+                    print("decibelSamples: \(decibelSamples)")
+                    
+                    if duration < 2.5 { return }
+                    
+                    let voiceMemo = VoiceMemo(fileURL: fileURL, duration: duration)
+                    self?.voiceMemos.append(voiceMemo)
+                    
+                    self?.voiceMemosTableView.reloadData()
+
+                })
                 
                 
             } catch let error {
@@ -73,7 +88,7 @@ class ViewController: UIViewController {
             }
 
         }else {
-            
+            AudioBot.stopAutomaticRecord()
         }
     }
     
