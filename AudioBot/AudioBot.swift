@@ -314,7 +314,7 @@ public extension AudioBot {
 
 // MARK: - AutomaticRecord
 
-extension AudioBot {
+public extension AudioBot {
     public class func startAutomaticRecordAudio(forUsage usage: Usage, withVADSetting setting :VAD, withDecibelSamplePeriodicReport decibelSamplePeriodicReport: PeriodicReport, withRecordResultReport recordResultReport: @escaping ResultReport) throws {
         do {
             
