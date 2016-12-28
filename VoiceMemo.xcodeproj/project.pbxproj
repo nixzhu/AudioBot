@@ -22,7 +22,6 @@
 		5056A7C61D485AD700D45CE3 /* AVAudioSession+AudioBot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5056A7C51D485AD700D45CE3 /* AVAudioSession+AudioBot.swift */; };
 		50E431DD1C2D1E1900FE64BF /* RecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E431DC1C2D1E1900FE64BF /* RecordButton.swift */; };
 		637F84251E138A06001132C0 /* Waver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637F84241E138A06001132C0 /* Waver.swift */; };
-		637F84271E139661001132C0 /* AudioBot+VAD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637F84261E139661001132C0 /* AudioBot+VAD.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,7 +66,6 @@
 		5056A7C51D485AD700D45CE3 /* AVAudioSession+AudioBot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AVAudioSession+AudioBot.swift"; sourceTree = "<group>"; };
 		50E431DC1C2D1E1900FE64BF /* RecordButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordButton.swift; sourceTree = "<group>"; };
 		637F84241E138A06001132C0 /* Waver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Waver.swift; sourceTree = "<group>"; };
-		637F84261E139661001132C0 /* AudioBot+VAD.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AudioBot+VAD.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,7 +127,6 @@
 			children = (
 				503B0D4F1C0949490053F2B5 /* AudioBot.h */,
 				503B0D5A1C09497D0053F2B5 /* AudioBot.swift */,
-				637F84261E139661001132C0 /* AudioBot+VAD.swift */,
 				503B0D5C1C09B9600053F2B5 /* NSFileManager+AudioBot.swift */,
 				5056A7C51D485AD700D45CE3 /* AVAudioSession+AudioBot.swift */,
 				503B0D511C0949490053F2B5 /* Info.plist */,
@@ -268,7 +265,6 @@
 			files = (
 				503B0D5B1C09497D0053F2B5 /* AudioBot.swift in Sources */,
 				5056A7C61D485AD700D45CE3 /* AVAudioSession+AudioBot.swift in Sources */,
-				637F84271E139661001132C0 /* AudioBot+VAD.swift in Sources */,
 				503B0D5D1C09B9600053F2B5 /* NSFileManager+AudioBot.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

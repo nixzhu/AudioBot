@@ -323,6 +323,13 @@ extension AudioBot {
             var isValid = false
             var count = 0
             let activeCount = Int(decibelSamplePeriodicReport.reportingFrequency * setting.silenceTime)
+            
+            func retry() {
+                if !sharedBot.automaticRecordEnable { return }
+                
+                try! startAutomaticRecordAudio(forUsage: usage, withVADSetting: setting, withDecibelSamplePeriodicReport: decibelSamplePeriodicReport, withRecordResultReport: recordResultReport)
+            }
+            
             let decibelPeriodicReport: AudioBot.PeriodicReport = (reportingFrequency: decibelSamplePeriodicReport.reportingFrequency, report: { decibelSample in
                 decibelSamplePeriodicReport.report(decibelSample)
                 
@@ -337,10 +344,7 @@ extension AudioBot {
                     stopRecord({ (fileURL, duration, decibelSamples) in
                         recordResultReport(fileURL, duration, decibelSamples)
                     })
-                    
-                    if !sharedBot.automaticRecordEnable { return }
-                    
-                    try! startAutomaticRecordAudio(forUsage: usage, withVADSetting: setting, withDecibelSamplePeriodicReport: decibelSamplePeriodicReport, withRecordResultReport: recordResultReport)
+                    retry()
                 }
             })
             try startRecordAudio(forUsage: usage, withDecibelSamplePeriodicReport: decibelPeriodicReport)
@@ -348,11 +352,7 @@ extension AudioBot {
             DispatchQueue.main.asyncAfter(deadline: .now() + setting.spaceTime, execute: {
                 if !isValid {
                     stopRecord(nil)
-                    
-                    if !sharedBot.automaticRecordEnable { return }
-                    
-                    try! startAutomaticRecordAudio(forUsage: usage, withVADSetting: setting, withDecibelSamplePeriodicReport: decibelSamplePeriodicReport, withRecordResultReport: recordResultReport)
-                    
+                    retry()
                 }
                 
             })
