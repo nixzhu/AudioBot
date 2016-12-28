@@ -14,7 +14,19 @@ class ViewController: UIViewController {
     @IBOutlet weak var voiceMemosTableView: UITableView!
 
     @IBOutlet weak var recordButton: RecordButton!
-
+    
+    @IBOutlet weak var modeSegmentedControl: UISegmentedControl!
+    
+    @IBOutlet weak var waver: Waver!
+    
+    @IBOutlet weak var waverBottom: NSLayoutConstraint!
+    
+    @IBOutlet weak var buttonBottom: NSLayoutConstraint!
+    
+    var bottomConstrains: [NSLayoutConstraint] {
+            return [self.buttonBottom, self.waverBottom]
+        }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -23,6 +35,48 @@ class ViewController: UIViewController {
 
     var voiceMemos: [VoiceMemo] = []
 
+    @IBAction func modeChangeAction(_ sender: Any) {
+        
+        self.record(recordButton)
+
+        let startConstant: CGFloat = 0
+        let endConstant: CGFloat = -128.0
+        let animationDuration: TimeInterval = 0.3
+        let index  = modeSegmentedControl.selectedSegmentIndex
+        self.bottomConstrains[1 - index].constant = endConstant
+        UIView.animate(withDuration: animationDuration, animations: {
+            self.view.layoutIfNeeded()
+        }, completion: { (finished) in
+            if finished {
+                self.bottomConstrains[index].constant = startConstant
+                UIView.animate(withDuration: animationDuration, animations: {
+                    self.view.layoutIfNeeded()
+                })
+            }
+        })
+        
+        if index == 1 {
+            do {
+                self.waver.waverCallback = { _ in }
+                let decibelSamplePeriodicReport: AudioBot.PeriodicReport = (reportingFrequency: 60, report: { decibelSample in
+                    print("decibelSample: \(decibelSample)")
+                    self.waver.level = CGFloat(decibelSample)
+                    
+                })
+                
+                AudioBot.mixWithOthersWhenRecording = true
+                try AudioBot.startRecordAudio(forUsage: .normal, withDecibelSamplePeriodicReport: decibelSamplePeriodicReport)
+                
+                
+            } catch let error {
+                print("record error: \(error)")
+            }
+
+        }else {
+            
+        }
+    }
+    
     @IBAction func record(_ sender: UIButton) {
 
         if AudioBot.recording {

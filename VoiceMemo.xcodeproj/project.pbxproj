@@ -21,6 +21,7 @@
 		503B0D611C09C0BD0053F2B5 /* VoiceMemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503B0D601C09C0BD0053F2B5 /* VoiceMemo.swift */; };
 		5056A7C61D485AD700D45CE3 /* AVAudioSession+AudioBot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5056A7C51D485AD700D45CE3 /* AVAudioSession+AudioBot.swift */; };
 		50E431DD1C2D1E1900FE64BF /* RecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E431DC1C2D1E1900FE64BF /* RecordButton.swift */; };
+		637F84251E138A06001132C0 /* Waver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637F84241E138A06001132C0 /* Waver.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +65,7 @@
 		503B0D601C09C0BD0053F2B5 /* VoiceMemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoiceMemo.swift; sourceTree = "<group>"; };
 		5056A7C51D485AD700D45CE3 /* AVAudioSession+AudioBot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AVAudioSession+AudioBot.swift"; sourceTree = "<group>"; };
 		50E431DC1C2D1E1900FE64BF /* RecordButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordButton.swift; sourceTree = "<group>"; };
+		637F84241E138A06001132C0 /* Waver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Waver.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +112,7 @@
 				503B0D601C09C0BD0053F2B5 /* VoiceMemo.swift */,
 				503B0D5E1C09BD0A0053F2B5 /* VoiceMemoCell.swift */,
 				50E431DC1C2D1E1900FE64BF /* RecordButton.swift */,
+				637F84241E138A06001132C0 /* Waver.swift */,
 				503B0D381C0948A10053F2B5 /* ViewController.swift */,
 				503B0D3A1C0948A10053F2B5 /* Main.storyboard */,
 				503B0D3D1C0948A20053F2B5 /* Assets.xcassets */,
@@ -248,6 +251,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				503B0D391C0948A10053F2B5 /* ViewController.swift in Sources */,
+				637F84251E138A06001132C0 /* Waver.swift in Sources */,
 				503B0D5F1C09BD0A0053F2B5 /* VoiceMemoCell.swift in Sources */,
 				503B0D611C09C0BD0053F2B5 /* VoiceMemo.swift in Sources */,
 				503B0D371C0948A10053F2B5 /* AppDelegate.swift in Sources */,
