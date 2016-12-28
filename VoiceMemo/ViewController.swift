@@ -8,6 +8,7 @@
 
 import UIKit
 import AudioBot
+import AVFoundation
 
 class ViewController: UIViewController {
 
@@ -68,7 +69,19 @@ class ViewController: UIViewController {
                 setting.silenceTime = 0.75
                 setting.silenceVolume = 0.05
                 
-                try AudioBot.startAutomaticRecordAudio(forUsage: .normal, withVADSetting: setting, withDecibelSamplePeriodicReport: decibelSamplePeriodicReport, withRecordResultReport: { [weak self] (fileURL, duration, decibelSamples) in
+                let recorderSetting = [
+                    AVFormatIDKey: Int(kAudioFormatLinearPCM) as AnyObject,
+                    AVEncoderAudioQualityKey : AVAudioQuality.medium.rawValue as AnyObject,
+                    AVEncoderBitRateKey : 64000 as AnyObject,
+                    AVNumberOfChannelsKey: 2 as AnyObject,
+                    AVSampleRateKey : 44100.0 as AnyObject
+                ]
+                
+                let url = try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+                
+                let usage = AudioBot.Usage.custom(fileURL: nil, type: "wav", settings: recorderSetting)
+                
+                try AudioBot.startAutomaticRecordAudio(forUsage: usage, withVADSetting: setting, withDecibelSamplePeriodicReport: decibelSamplePeriodicReport, withRecordResultReport: { [weak self] (fileURL, duration, decibelSamples) in
                     print("fileURL: \(fileURL)")
                     print("duration: \(duration)")
                     print("decibelSamples: \(decibelSamples)")

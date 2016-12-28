@@ -37,10 +37,10 @@ extension FileManager {
         return nil
     }
 
-    class func audiobot_audioFileURLWithName(_ name: String) -> URL? {
+    class func audiobot_audioFileURLWithName(_ name: String, _ type: String) -> URL? {
 
         if let audioCachesURL = audiobot_audioCachesURL() {
-            return audioCachesURL.appendingPathComponent("\(name).m4a")
+            return audioCachesURL.appendingPathComponent("\(name).\(type)")
         }
 
         return nil

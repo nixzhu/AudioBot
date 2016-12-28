@@ -33,7 +33,7 @@ final public class AudioBot: NSObject {
     }
 
     fileprivate lazy var normalAudioRecorder: AVAudioRecorder = {
-        let fileURL = FileManager.audiobot_audioFileURLWithName(UUID().uuidString)!
+        let fileURL = FileManager.audiobot_audioFileURLWithName(UUID().uuidString, "m4a")!
         return try! AVAudioRecorder(url: fileURL, settings: Usage.normal.settings)
     }()
 
@@ -119,7 +119,7 @@ public extension AudioBot {
     public enum Usage {
 
         case normal
-        case custom(fileURL: URL?, settings: [String: AnyObject])
+        case custom(fileURL: URL?, type: String, settings: [String: AnyObject])
 
         var settings: [String: AnyObject] {
 
@@ -134,9 +134,30 @@ public extension AudioBot {
                     AVSampleRateKey : 44100.0 as AnyObject
                 ]
 
-            case .custom(_, let settings):
+            case .custom(_, _, let settings):
                 return settings
             }
+        }
+        
+        var fileURL: URL? {
+            switch self {
+            case .normal:
+                return nil
+                
+            case .custom(let fileURL, _, _):
+                return fileURL
+            }
+        }
+        
+        var type: String {
+            switch self {
+            case .normal:
+                return "m4a"
+                
+            case .custom(_, let type, _):
+                return type
+            }
+
         }
     }
 
@@ -179,8 +200,8 @@ public extension AudioBot {
             switch usage {
             case .normal:
                 audioRecorder = sharedBot.normalAudioRecorder
-            case .custom(let fileURL, let settings):
-                guard let fileURL = (fileURL ?? FileManager.audiobot_audioFileURLWithName(UUID().uuidString)) else {
+            case .custom(let fileURL, let type, let settings):
+                guard let fileURL = (fileURL ?? FileManager.audiobot_audioFileURLWithName(UUID().uuidString, type)) else {
                     throw AudioBotError.noFileURL
                 }
                 audioRecorder = try AVAudioRecorder(url: fileURL, settings: settings)
@@ -320,6 +341,12 @@ public extension AudioBot {
             
             sharedBot.automaticRecordEnable = true
             
+            let settings = usage.settings
+            let type = usage.type
+            guard let url = usage.fileURL?.appendingPathComponent(UUID().uuidString + "." + type, isDirectory: false) else { fatalError() }
+            
+            let newUsage = AudioBot.Usage.custom(fileURL: url, type: type, settings: settings)
+            
             var isValid = false
             var count = 0
             let activeCount = Int(decibelSamplePeriodicReport.reportingFrequency * setting.silenceTime)
@@ -347,7 +374,7 @@ public extension AudioBot {
                     retry()
                 }
             })
-            try startRecordAudio(forUsage: usage, withDecibelSamplePeriodicReport: decibelPeriodicReport)
+            try startRecordAudio(forUsage: newUsage, withDecibelSamplePeriodicReport: decibelPeriodicReport)
             
             DispatchQueue.main.asyncAfter(deadline: .now() + setting.spaceTime, execute: {
                 if !isValid {
