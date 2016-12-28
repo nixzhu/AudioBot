@@ -79,7 +79,7 @@ class ViewController: UIViewController {
                 
                 let url = try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
                 
-                let usage = AudioBot.Usage.custom(fileURL: nil, type: "wav", settings: recorderSetting)
+                let usage = AudioBot.Usage.custom(fileURL: url, type: "wav", settings: recorderSetting)
                 
                 try AudioBot.startAutomaticRecordAudio(forUsage: usage, withVADSetting: setting, withDecibelSamplePeriodicReport: decibelSamplePeriodicReport, withRecordResultReport: { [weak self] (fileURL, duration, decibelSamples) in
                     print("fileURL: \(fileURL)")
