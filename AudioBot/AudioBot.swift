@@ -163,8 +163,6 @@ public extension AudioBot {
 
     public class func startRecordAudio(forUsage usage: Usage, withDecibelSamplePeriodicReport decibelSamplePeriodicReport: PeriodicReport) throws {
 
-        stopPlay()
-
         do {
             let session = AVAudioSession.sharedInstance()
             if mixWithOthersWhenRecording {
