@@ -100,7 +100,7 @@ final public class AudioBot: NSObject {
     }
 
     fileprivate func deactiveAudioSessionAndNotifyOthers() {
-
+        if automaticRecordEnable { return }
         _ = try? AVAudioSession.sharedInstance().setActive(false, with: .notifyOthersOnDeactivation)
     }
 }
