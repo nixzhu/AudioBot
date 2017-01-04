@@ -401,8 +401,6 @@ public extension AudioBot {
 
     public class func startPlayAudioAtFileURL(_ fileURL: URL, fromTime: TimeInterval, withProgressPeriodicReport progressPeriodicReport: PeriodicReport, finish: @escaping (Bool) -> Void) throws {
 
-        stopRecord { _, _, _ in }
-
         let session = AVAudioSession.sharedInstance()
         if !session.audiobot_canPlay {
             do {
