@@ -32,7 +32,7 @@ final public class AudioBot: NSObject {
     }
 
     fileprivate lazy var normalAudioRecorder: AVAudioRecorder = {
-        let fileURL = FileManager.audiobot_audioFileURLWithName(UUID().uuidString, "m4a")!
+        let fileURL = FileManager.audiobot_audioFileURLWithName(UUID().uuidString, Usage.normal.type)!
         return try! AVAudioRecorder(url: fileURL, settings: Usage.normal.settings)
     }()
 
