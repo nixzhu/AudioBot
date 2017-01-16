@@ -1,5 +1,5 @@
 //
-//  NSFileManager+AudioBot.swift
+//  FileManager+AudioBot.swift
 //  AudioBot
 //
 //  Created by NIX on 15/11/28.

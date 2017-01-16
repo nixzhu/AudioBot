@@ -16,11 +16,12 @@
 		503B0D541C0949490053F2B5 /* AudioBot.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 503B0D4D1C0949490053F2B5 /* AudioBot.framework */; };
 		503B0D551C0949490053F2B5 /* AudioBot.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 503B0D4D1C0949490053F2B5 /* AudioBot.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		503B0D5B1C09497D0053F2B5 /* AudioBot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503B0D5A1C09497D0053F2B5 /* AudioBot.swift */; };
-		503B0D5D1C09B9600053F2B5 /* NSFileManager+AudioBot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503B0D5C1C09B9600053F2B5 /* NSFileManager+AudioBot.swift */; };
+		503B0D5D1C09B9600053F2B5 /* FileManager+AudioBot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503B0D5C1C09B9600053F2B5 /* FileManager+AudioBot.swift */; };
 		503B0D5F1C09BD0A0053F2B5 /* VoiceMemoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503B0D5E1C09BD0A0053F2B5 /* VoiceMemoCell.swift */; };
 		503B0D611C09C0BD0053F2B5 /* VoiceMemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503B0D601C09C0BD0053F2B5 /* VoiceMemo.swift */; };
 		5056A7C61D485AD700D45CE3 /* AVAudioSession+AudioBot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5056A7C51D485AD700D45CE3 /* AVAudioSession+AudioBot.swift */; };
 		50E431DD1C2D1E1900FE64BF /* RecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E431DC1C2D1E1900FE64BF /* RecordButton.swift */; };
+		50E49A9F1E2CA62400D2C3BA /* FileManager+VoiceMemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E49A9E1E2CA62400D2C3BA /* FileManager+VoiceMemo.swift */; };
 		637F84251E138A06001132C0 /* Waver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637F84241E138A06001132C0 /* Waver.swift */; };
 /* End PBXBuildFile section */
 
@@ -60,11 +61,12 @@
 		503B0D4F1C0949490053F2B5 /* AudioBot.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioBot.h; sourceTree = "<group>"; };
 		503B0D511C0949490053F2B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		503B0D5A1C09497D0053F2B5 /* AudioBot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioBot.swift; sourceTree = "<group>"; };
-		503B0D5C1C09B9600053F2B5 /* NSFileManager+AudioBot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSFileManager+AudioBot.swift"; sourceTree = "<group>"; };
+		503B0D5C1C09B9600053F2B5 /* FileManager+AudioBot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "FileManager+AudioBot.swift"; sourceTree = "<group>"; };
 		503B0D5E1C09BD0A0053F2B5 /* VoiceMemoCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoiceMemoCell.swift; sourceTree = "<group>"; };
 		503B0D601C09C0BD0053F2B5 /* VoiceMemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoiceMemo.swift; sourceTree = "<group>"; };
 		5056A7C51D485AD700D45CE3 /* AVAudioSession+AudioBot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AVAudioSession+AudioBot.swift"; sourceTree = "<group>"; };
 		50E431DC1C2D1E1900FE64BF /* RecordButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordButton.swift; sourceTree = "<group>"; };
+		50E49A9E1E2CA62400D2C3BA /* FileManager+VoiceMemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "FileManager+VoiceMemo.swift"; sourceTree = "<group>"; };
 		637F84241E138A06001132C0 /* Waver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Waver.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -114,6 +116,7 @@
 				50E431DC1C2D1E1900FE64BF /* RecordButton.swift */,
 				637F84241E138A06001132C0 /* Waver.swift */,
 				503B0D381C0948A10053F2B5 /* ViewController.swift */,
+				50E49A9E1E2CA62400D2C3BA /* FileManager+VoiceMemo.swift */,
 				503B0D3A1C0948A10053F2B5 /* Main.storyboard */,
 				503B0D3D1C0948A20053F2B5 /* Assets.xcassets */,
 				503B0D3F1C0948A20053F2B5 /* LaunchScreen.storyboard */,
@@ -127,7 +130,7 @@
 			children = (
 				503B0D4F1C0949490053F2B5 /* AudioBot.h */,
 				503B0D5A1C09497D0053F2B5 /* AudioBot.swift */,
-				503B0D5C1C09B9600053F2B5 /* NSFileManager+AudioBot.swift */,
+				503B0D5C1C09B9600053F2B5 /* FileManager+AudioBot.swift */,
 				5056A7C51D485AD700D45CE3 /* AVAudioSession+AudioBot.swift */,
 				503B0D511C0949490053F2B5 /* Info.plist */,
 			);
@@ -252,6 +255,7 @@
 			files = (
 				503B0D391C0948A10053F2B5 /* ViewController.swift in Sources */,
 				637F84251E138A06001132C0 /* Waver.swift in Sources */,
+				50E49A9F1E2CA62400D2C3BA /* FileManager+VoiceMemo.swift in Sources */,
 				503B0D5F1C09BD0A0053F2B5 /* VoiceMemoCell.swift in Sources */,
 				503B0D611C09C0BD0053F2B5 /* VoiceMemo.swift in Sources */,
 				503B0D371C0948A10053F2B5 /* AppDelegate.swift in Sources */,
@@ -265,7 +269,7 @@
 			files = (
 				503B0D5B1C09497D0053F2B5 /* AudioBot.swift in Sources */,
 				5056A7C61D485AD700D45CE3 /* AVAudioSession+AudioBot.swift in Sources */,
-				503B0D5D1C09B9600053F2B5 /* NSFileManager+AudioBot.swift in Sources */,
+				503B0D5D1C09B9600053F2B5 /* FileManager+AudioBot.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

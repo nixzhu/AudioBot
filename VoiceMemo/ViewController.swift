@@ -64,7 +64,9 @@ class ViewController: UIViewController {
                     print("duration: \(duration)")
                     print("decibelSamples: \(decibelSamples)")
                     if duration < 2.5 { return }
-                    let voiceMemo = VoiceMemo(fileURL: fileURL, duration: duration)
+                    guard let newFileURL = FileManager.voicememo_audioFileURLWithName(UUID().uuidString, "wav") else { return }
+                    guard let _ = try? FileManager.default.copyItem(at: fileURL, to: newFileURL) else { return }
+                    let voiceMemo = VoiceMemo(fileURL: newFileURL, duration: duration)
                     self?.voiceMemos.append(voiceMemo)
                     self?.voiceMemosTableView.reloadData()
                 }
@@ -82,7 +84,9 @@ class ViewController: UIViewController {
                 print("fileURL: \(fileURL)")
                 print("duration: \(duration)")
                 print("decibelSamples: \(decibelSamples)")
-                let voiceMemo = VoiceMemo(fileURL: fileURL, duration: duration)
+                guard let newFileURL = FileManager.voicememo_audioFileURLWithName(UUID().uuidString, "m4a") else { return }
+                guard let _ = try? FileManager.default.copyItem(at: fileURL, to: newFileURL) else { return }
+                let voiceMemo = VoiceMemo(fileURL: newFileURL, duration: duration)
                 self?.voiceMemos.append(voiceMemo)
                 self?.voiceMemosTableView.reloadData()
             }
@@ -114,54 +118,49 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "VoiceMemoCell") as! VoiceMemoCell
-        return cell
-    }
-
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if let cell = cell as? VoiceMemoCell {
-            let voiceMemo = voiceMemos[(indexPath as NSIndexPath).row]
-            cell.configureWithVoiceMemo(voiceMemo)
-            cell.playOrPauseAction = { [weak self] cell, progressView in
-                func tryPlay() {
-                    do {
-                        let progressPeriodicReport: AudioBot.PeriodicReport = (reportingFrequency: 10, report: { progress in
-                            print("progress: \(progress)")
-                            voiceMemo.progress = CGFloat(progress)
-                            progressView.progress = progress
-                        })
-                        let fromTime = TimeInterval(voiceMemo.progress) * voiceMemo.duration
-                        try AudioBot.startPlayAudioAtFileURL(voiceMemo.fileURL, fromTime: fromTime, withProgressPeriodicReport: progressPeriodicReport, finish: { success in
-                            voiceMemo.playing = false
-                            cell.playing = false
-                        })
-                        voiceMemo.playing = true
-                        cell.playing = true
-                    } catch {
-                        print("play error: \(error)")
-                    }
-                }
-                if AudioBot.playing {
-                    AudioBot.pausePlay()
-                    if let strongSelf = self {
-                        for index in 0..<(strongSelf.voiceMemos).count {
-                            let voiceMemo = strongSelf.voiceMemos[index]
-                            if AudioBot.playingFileURL == voiceMemo.fileURL {
-                                let indexPath = IndexPath(row: index, section: 0)
-                                if let cell = tableView.cellForRow(at: indexPath) as? VoiceMemoCell {
-                                    voiceMemo.playing = false
-                                    cell.playing = false
-                                }
-                                break
-                            }
-                        }
-                    }
-                    if AudioBot.playingFileURL != voiceMemo.fileURL {
-                        tryPlay()
-                    }
-                } else {
-                    tryPlay()
+        let voiceMemo = voiceMemos[indexPath.row]
+        cell.configureWithVoiceMemo(voiceMemo)
+        cell.playOrPauseAction = { [weak self] cell, progressView in
+            func tryPlay() {
+                do {
+                    let progressPeriodicReport: AudioBot.PeriodicReport = (reportingFrequency: 10, report: { progress in
+                        print("progress: \(progress)")
+                        voiceMemo.progress = CGFloat(progress)
+                        progressView.progress = progress
+                    })
+                    let fromTime = TimeInterval(voiceMemo.progress) * voiceMemo.duration
+                    try AudioBot.startPlayAudioAtFileURL(voiceMemo.fileURL, fromTime: fromTime, withProgressPeriodicReport: progressPeriodicReport, finish: { success in
+                        voiceMemo.playing = false
+                        cell.playing = false
+                    })
+                    voiceMemo.playing = true
+                    cell.playing = true
+                } catch {
+                    print("play error: \(error)")
                 }
             }
+            if AudioBot.playing {
+                AudioBot.pausePlay()
+                if let strongSelf = self {
+                    for index in 0..<(strongSelf.voiceMemos).count {
+                        let voiceMemo = strongSelf.voiceMemos[index]
+                        if AudioBot.playingFileURL == voiceMemo.fileURL {
+                            let indexPath = IndexPath(row: index, section: 0)
+                            if let cell = tableView.cellForRow(at: indexPath) as? VoiceMemoCell {
+                                voiceMemo.playing = false
+                                cell.playing = false
+                            }
+                            break
+                        }
+                    }
+                }
+                if AudioBot.playingFileURL != voiceMemo.fileURL {
+                    tryPlay()
+                }
+            } else {
+                tryPlay()
+            }
         }
+        return cell
     }
 }
