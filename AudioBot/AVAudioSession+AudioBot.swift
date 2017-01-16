@@ -12,7 +12,6 @@ import AVFoundation
 extension AVAudioSession {
 
     var audiobot_canPlay: Bool {
-
         switch category {
         case AVAudioSessionCategoryPlayback:
             return true
@@ -23,4 +22,3 @@ extension AVAudioSession {
         }
     }
 }
-
