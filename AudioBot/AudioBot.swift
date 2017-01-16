@@ -14,11 +14,11 @@ public enum AudioBotError: Error {
     case noFileURL
 }
 
-public final class VAD: NSObject {
-    public var longestTime: TimeInterval   = 30.0
-    public var spaceTime: TimeInterval     = 2.0
-    public var silenceTime: TimeInterval   = 0.5
-    public var silenceVolume: Float        = 0.1
+public final class VADSettings: NSObject {
+    public var longestDuration: TimeInterval    = 30.0
+    public var spaceDuration: TimeInterval      = 2.0
+    public var silenceDuration: TimeInterval    = 0.5
+    public var silenceVolume: Float             = 0.1
 }
 
 final public class AudioBot: NSObject {
@@ -275,7 +275,7 @@ extension AudioBot {
 
 extension AudioBot {
 
-    public class func startAutomaticRecordAudio(forUsage usage: Usage, withVADSetting setting :VAD, withDecibelSamplePeriodicReport decibelSamplePeriodicReport: PeriodicReport, withRecordResultReport recordResultReport: @escaping ResultReport) throws {
+    public class func startAutomaticRecordAudio(forUsage usage: Usage, withVADSettings vadSettings: VADSettings, decibelSamplePeriodicReport: PeriodicReport, recordResultReport: @escaping ResultReport) throws {
         do {
             sharedBot.automaticRecordEnable = true
             let settings = usage.settings
@@ -284,14 +284,14 @@ extension AudioBot {
             let newUsage = AudioBot.Usage.custom(fileURL: url, type: type, settings: settings)
             var isValid = false
             var count = 0
-            let activeCount = Int(decibelSamplePeriodicReport.reportingFrequency * setting.silenceTime)
+            let activeCount = Int(decibelSamplePeriodicReport.reportingFrequency * vadSettings.silenceDuration)
             func retry() {
                 guard sharedBot.automaticRecordEnable else { return }
-                try! startAutomaticRecordAudio(forUsage: usage, withVADSetting: setting, withDecibelSamplePeriodicReport: decibelSamplePeriodicReport, withRecordResultReport: recordResultReport)
+                try! startAutomaticRecordAudio(forUsage: usage, withVADSettings: vadSettings, decibelSamplePeriodicReport: decibelSamplePeriodicReport, recordResultReport: recordResultReport)
             }
             let decibelPeriodicReport: AudioBot.PeriodicReport = (reportingFrequency: decibelSamplePeriodicReport.reportingFrequency, report: { decibelSample in
                 decibelSamplePeriodicReport.report(decibelSample)
-                if decibelSample > setting.silenceVolume {
+                if decibelSample > vadSettings.silenceVolume {
                     isValid = true
                     count = 0
                 } else if isValid {
@@ -305,7 +305,7 @@ extension AudioBot {
                 }
             })
             try startRecordAudio(forUsage: newUsage, withDecibelSamplePeriodicReport: decibelPeriodicReport)
-            DispatchQueue.main.asyncAfter(deadline: .now() + setting.spaceTime) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + vadSettings.spaceDuration) {
                 if !isValid {
                     stopRecord(nil)
                     retry()
