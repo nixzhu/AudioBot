@@ -58,8 +58,7 @@ class ViewController: UIViewController {
                 let vadSettings = VADSettings()
                 vadSettings.silenceDuration = 0.75
                 vadSettings.silenceVolume = 0.05
-                let recorderSetting = AudioBot.Usage.defaultSettings
-                let usage = AudioBot.Usage.custom(fileURL: nil, type: "wav", settings: recorderSetting)
+                let usage = AudioBot.Usage.custom(fileURL: nil, type: "wav", settings: AudioBot.Usage.wavSettings)
                 try AudioBot.startAutomaticRecordAudio(forUsage: usage, withVADSettings: vadSettings, decibelSamplePeriodicReport: decibelSamplePeriodicReport) { [weak self] (fileURL, duration, decibelSamples) in
                     print("fileURL: \(fileURL)")
                     print("duration: \(duration)")

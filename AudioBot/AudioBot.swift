@@ -111,20 +111,26 @@ extension AudioBot {
         case normal
         case custom(fileURL: URL?, type: String, settings: [String: AnyObject])
 
-        public static var defaultSettings: [String: AnyObject] {
-            return [
-                AVFormatIDKey: Int(kAudioFormatMPEG4AAC) as AnyObject,
-                AVEncoderAudioQualityKey: AVAudioQuality.medium.rawValue as AnyObject,
-                AVEncoderBitRateKey: 64000 as AnyObject,
-                AVNumberOfChannelsKey: 2 as AnyObject,
-                AVSampleRateKey: 44100.0 as AnyObject
-            ]
-        }
+        public static let m4aSettings: [String: AnyObject] = [
+            AVFormatIDKey: Int(kAudioFormatMPEG4AAC) as AnyObject,
+            AVEncoderAudioQualityKey: AVAudioQuality.medium.rawValue as AnyObject,
+            AVEncoderBitRateKey: 64000 as AnyObject,
+            AVNumberOfChannelsKey: 2 as AnyObject,
+            AVSampleRateKey: 44100.0 as AnyObject
+        ]
+
+        public static let wavSettings: [String: AnyObject] = [
+            AVFormatIDKey: Int(kAudioFormatLinearPCM) as AnyObject,
+            AVEncoderAudioQualityKey : AVAudioQuality.medium.rawValue as AnyObject,
+            AVEncoderBitRateKey : 64000 as AnyObject,
+            AVNumberOfChannelsKey: 2 as AnyObject,
+            AVSampleRateKey : 44100.0 as AnyObject
+        ]
 
         var settings: [String: AnyObject] {
             switch self {
             case .normal:
-                return Usage.defaultSettings
+                return Usage.m4aSettings
             case .custom(_, _, let settings):
                 return settings
             }
