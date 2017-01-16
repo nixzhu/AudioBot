@@ -284,8 +284,10 @@ extension AudioBot {
             sharedBot.automaticRecordEnable = true
             let settings = usage.settings
             let type = usage.type
-            guard let url = usage.fileURL?.appendingPathComponent(UUID().uuidString + "." + type, isDirectory: false) else { fatalError() }
-            let newUsage = AudioBot.Usage.custom(fileURL: url, type: type, settings: settings)
+            guard let fileURL = (usage.fileURL ?? FileManager.audiobot_audioFileURLWithName(UUID().uuidString, type)) else {
+                throw AudioBotError.noFileURL
+            }
+            let newUsage = AudioBot.Usage.custom(fileURL: fileURL, type: type, settings: settings)
             var isValid = false
             var count = 0
             let activeCount = Int(decibelSamplePeriodicReport.reportingFrequency * vadSettings.silenceDuration)
