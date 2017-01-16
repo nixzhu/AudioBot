@@ -1,11 +1,15 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="NGv-fH-L0j">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16C67" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="NGv-fH-L0j">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Voice Memo-->
+        <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="VoiceMemo" customModuleProvider="target" sceneMemberID="viewController">
@@ -19,10 +23,10 @@
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="60" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Nml-Nb-Ixs">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="539"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="VoiceMemoCell" rowHeight="60" id="nCk-DP-KPu" customClass="VoiceMemoCell" customModule="VoiceMemo" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="92" width="375" height="60"/>
+                                        <rect key="frame" x="0.0" y="28" width="375" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="nCk-DP-KPu" id="6ro-B7-XiO">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="59"/>
@@ -38,7 +42,7 @@
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2015.11.28 18:53" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PlW-EM-cBk">
                                                     <rect key="frame" x="55" y="15" width="129" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="mDG-88-qKE">
@@ -47,7 +51,7 @@
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" text="24.2" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b7L-hL-tlR">
                                                     <rect key="frame" x="326" y="15" width="34" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
@@ -78,7 +82,7 @@
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="Ya3-Aq-EvY"/>
                                 </connections>
                             </tableView>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="byR-Yl-DP3">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="byR-Yl-DP3" userLabel="ButtonView">
                                 <rect key="frame" x="0.0" y="539" width="375" height="128"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" placeholderIntrinsicWidth="100" placeholderIntrinsicHeight="100" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="d5n-Z9-1Aa" customClass="RecordButton" customModule="VoiceMemo" customModuleProvider="target">
@@ -88,41 +92,81 @@
                                         </connections>
                                     </button>
                                 </subviews>
-                                <color key="backgroundColor" red="0.40000000600000002" green="0.80000001190000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" red="0.40000000600000002" green="0.80000001190000003" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstItem="d5n-Z9-1Aa" firstAttribute="centerX" secondItem="byR-Yl-DP3" secondAttribute="centerX" id="06x-da-mjW"/>
                                     <constraint firstAttribute="height" constant="128" id="9fM-Hp-tNC"/>
                                     <constraint firstItem="d5n-Z9-1Aa" firstAttribute="centerY" secondItem="byR-Yl-DP3" secondAttribute="centerY" id="bUs-jE-zqN"/>
                                 </constraints>
                             </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gfE-jt-NSd" userLabel="WaverView">
+                                <rect key="frame" x="0.0" y="667" width="375" height="128"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kds-lK-YyQ" customClass="Waver" customModule="VoiceMemo" customModuleProvider="target">
+                                        <rect key="frame" x="37" y="24" width="300" height="80"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="300" id="75E-hS-2DH"/>
+                                            <constraint firstAttribute="height" constant="80" id="yRi-rW-I6L"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" red="0.1019607843" green="0.58823529409999997" blue="0.1215686275" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="128" id="F0e-Zo-p8n"/>
+                                    <constraint firstItem="kds-lK-YyQ" firstAttribute="centerY" secondItem="gfE-jt-NSd" secondAttribute="centerY" id="H5N-fT-hak"/>
+                                    <constraint firstItem="kds-lK-YyQ" firstAttribute="centerX" secondItem="gfE-jt-NSd" secondAttribute="centerX" id="Xsj-Ja-anF"/>
+                                </constraints>
+                            </view>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="gfE-jt-NSd" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="8tl-K1-R13"/>
                             <constraint firstItem="byR-Yl-DP3" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="9PL-UX-tiQ"/>
+                            <constraint firstItem="byR-Yl-DP3" firstAttribute="top" secondItem="Nml-Nb-Ixs" secondAttribute="bottom" priority="900" id="S9y-Pv-4NG"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="byR-Yl-DP3" secondAttribute="bottom" id="Tyw-1N-1zx"/>
-                            <constraint firstItem="byR-Yl-DP3" firstAttribute="top" secondItem="Nml-Nb-Ixs" secondAttribute="bottom" id="WbW-rz-CDR"/>
+                            <constraint firstItem="byR-Yl-DP3" firstAttribute="top" relation="greaterThanOrEqual" secondItem="Nml-Nb-Ixs" secondAttribute="bottom" id="WbW-rz-CDR"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="gfE-jt-NSd" secondAttribute="bottom" constant="-128" id="eLH-8C-vp2"/>
                             <constraint firstAttribute="trailing" secondItem="byR-Yl-DP3" secondAttribute="trailing" id="fH6-3I-Hv6"/>
+                            <constraint firstAttribute="trailing" secondItem="gfE-jt-NSd" secondAttribute="trailing" id="gNL-VP-Nmd"/>
                             <constraint firstItem="Nml-Nb-Ixs" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="hSx-YU-hcQ"/>
+                            <constraint firstItem="gfE-jt-NSd" firstAttribute="top" relation="greaterThanOrEqual" secondItem="Nml-Nb-Ixs" secondAttribute="bottom" id="pCc-c0-RaY"/>
                             <constraint firstItem="Nml-Nb-Ixs" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="sOY-ZR-DVK"/>
                             <constraint firstAttribute="trailing" secondItem="Nml-Nb-Ixs" secondAttribute="trailing" id="tB6-sI-APi"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Voice Memo" id="MdR-wI-Jh9"/>
+                    <navigationItem key="navigationItem" id="MdR-wI-Jh9">
+                        <nil key="title"/>
+                        <segmentedControl key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="w3K-gP-s6V">
+                            <rect key="frame" x="97" y="7" width="182" height="30"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <segments>
+                                <segment title="Manual" width="90"/>
+                                <segment title="Automatic"/>
+                            </segments>
+                            <connections>
+                                <action selector="modeChangeAction:" destination="BYZ-38-t0r" eventType="valueChanged" id="gcc-UA-0gn"/>
+                            </connections>
+                        </segmentedControl>
+                    </navigationItem>
                     <connections>
+                        <outlet property="buttonBottom" destination="Tyw-1N-1zx" id="GnO-TO-J7d"/>
+                        <outlet property="modeSegmentedControl" destination="w3K-gP-s6V" id="Lq7-gU-TZm"/>
                         <outlet property="recordButton" destination="d5n-Z9-1Aa" id="5uw-3Z-Rxt"/>
                         <outlet property="voiceMemosTableView" destination="Nml-Nb-Ixs" id="I22-RI-yeW"/>
+                        <outlet property="waver" destination="kds-lK-YyQ" id="UM5-gU-n6a"/>
+                        <outlet property="waverBottom" destination="eLH-8C-vp2" id="tlY-FS-eZl"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="914.5" y="1091.5"/>
+            <point key="canvasLocation" x="914.39999999999998" y="1090.704647676162"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="kFV-nS-cMI">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="NGv-fH-L0j" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="oCP-lk-4mc">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -134,7 +178,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RQ4-Pz-hgn" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="448" y="1092"/>
+            <point key="canvasLocation" x="22" y="1091"/>
         </scene>
     </scenes>
     <resources>

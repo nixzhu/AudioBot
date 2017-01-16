@@ -8,13 +8,26 @@
 
 import UIKit
 import AudioBot
+import AVFoundation
 
 class ViewController: UIViewController {
 
     @IBOutlet weak var voiceMemosTableView: UITableView!
 
     @IBOutlet weak var recordButton: RecordButton!
-
+    
+    @IBOutlet weak var modeSegmentedControl: UISegmentedControl!
+    
+    @IBOutlet weak var waver: Waver!
+    
+    @IBOutlet weak var waverBottom: NSLayoutConstraint!
+    
+    @IBOutlet weak var buttonBottom: NSLayoutConstraint!
+    
+    var bottomConstrains: [NSLayoutConstraint] {
+            return [self.buttonBottom, self.waverBottom]
+        }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -23,6 +36,75 @@ class ViewController: UIViewController {
 
     var voiceMemos: [VoiceMemo] = []
 
+    @IBAction func modeChangeAction(_ sender: Any) {
+        
+        let startConstant: CGFloat = 0
+        let endConstant: CGFloat = -128.0
+        let animationDuration: TimeInterval = 0.3
+        let index  = modeSegmentedControl.selectedSegmentIndex
+        self.bottomConstrains[1 - index].constant = endConstant
+        UIView.animate(withDuration: animationDuration, animations: {
+            self.view.layoutIfNeeded()
+        }, completion: { (finished) in
+            if finished {
+                self.bottomConstrains[index].constant = startConstant
+                UIView.animate(withDuration: animationDuration, animations: {
+                    self.view.layoutIfNeeded()
+                })
+            }
+        })
+        
+        if index == 1 {
+            do {
+                self.waver.waverCallback = { _ in }
+                let decibelSamplePeriodicReport: AudioBot.PeriodicReport = (reportingFrequency: 60, report: { decibelSample in
+                    print("decibelSample: \(decibelSample)")
+                    self.waver.level = CGFloat(decibelSample)
+                    
+                })
+                
+                AudioBot.mixWithOthersWhenRecording = true
+                
+                let setting = VAD()
+                setting.silenceTime = 0.75
+                setting.silenceVolume = 0.05
+                
+                let recorderSetting = [
+                    AVFormatIDKey: Int(kAudioFormatLinearPCM) as AnyObject,
+                    AVEncoderAudioQualityKey : AVAudioQuality.medium.rawValue as AnyObject,
+                    AVEncoderBitRateKey : 64000 as AnyObject,
+                    AVNumberOfChannelsKey: 2 as AnyObject,
+                    AVSampleRateKey : 44100.0 as AnyObject
+                ]
+                
+                let url = try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+                
+                let usage = AudioBot.Usage.custom(fileURL: url, type: "wav", settings: recorderSetting)
+                
+                try AudioBot.startAutomaticRecordAudio(forUsage: usage, withVADSetting: setting, withDecibelSamplePeriodicReport: decibelSamplePeriodicReport, withRecordResultReport: { [weak self] (fileURL, duration, decibelSamples) in
+                    print("fileURL: \(fileURL)")
+                    print("duration: \(duration)")
+                    print("decibelSamples: \(decibelSamples)")
+                    
+                    if duration < 2.5 { return }
+                    
+                    let voiceMemo = VoiceMemo(fileURL: fileURL, duration: duration)
+                    self?.voiceMemos.append(voiceMemo)
+                    
+                    self?.voiceMemosTableView.reloadData()
+
+                })
+                
+                
+            } catch let error {
+                print("record error: \(error)")
+            }
+
+        }else {
+            AudioBot.stopAutomaticRecord()
+        }
+    }
+    
     @IBAction func record(_ sender: UIButton) {
 
         if AudioBot.recording {

@@ -15,6 +15,13 @@ public enum AudioBotError: Error {
     case noFileURL
 }
 
+public final class VAD: NSObject {
+    public var longestTime: TimeInterval   = 30.0
+    public var spaceTime: TimeInterval     = 2.0
+    public var silenceTime: TimeInterval   = 0.5
+    public var silenceVolume: Float        = 0.1
+}
+
 final public class AudioBot: NSObject {
 
     public static var mixWithOthersWhenRecording: Bool = false
@@ -26,7 +33,7 @@ final public class AudioBot: NSObject {
     }
 
     fileprivate lazy var normalAudioRecorder: AVAudioRecorder = {
-        let fileURL = FileManager.audiobot_audioFileURLWithName(UUID().uuidString)!
+        let fileURL = FileManager.audiobot_audioFileURLWithName(UUID().uuidString, "m4a")!
         return try! AVAudioRecorder(url: fileURL, settings: Usage.normal.settings)
     }()
 
@@ -55,7 +62,10 @@ final public class AudioBot: NSObject {
     fileprivate var recordingTimer: Timer?
     fileprivate var playingTimer: Timer?
 
+    fileprivate var automaticRecordEnable = false
+    
     public typealias PeriodicReport = (reportingFrequency: TimeInterval, report: (_ value: Float) -> Void)
+    public typealias ResultReport = ((_ fileURL: URL, _ duration: TimeInterval, _ decibelSamples: [Float]) -> Void)
 
     fileprivate var recordingPeriodicReport: PeriodicReport?
     fileprivate var playingPeriodicReport: PeriodicReport?
@@ -90,7 +100,7 @@ final public class AudioBot: NSObject {
     }
 
     fileprivate func deactiveAudioSessionAndNotifyOthers() {
-
+        if automaticRecordEnable { return }
         _ = try? AVAudioSession.sharedInstance().setActive(false, with: .notifyOthersOnDeactivation)
     }
 }
@@ -109,7 +119,7 @@ public extension AudioBot {
     public enum Usage {
 
         case normal
-        case custom(fileURL: URL?, settings: [String: AnyObject])
+        case custom(fileURL: URL?, type: String, settings: [String: AnyObject])
 
         var settings: [String: AnyObject] {
 
@@ -124,15 +134,34 @@ public extension AudioBot {
                     AVSampleRateKey : 44100.0 as AnyObject
                 ]
 
-            case .custom(_, let settings):
+            case .custom(_, _, let settings):
                 return settings
             }
+        }
+        
+        var fileURL: URL? {
+            switch self {
+            case .normal:
+                return nil
+                
+            case .custom(let fileURL, _, _):
+                return fileURL
+            }
+        }
+        
+        var type: String {
+            switch self {
+            case .normal:
+                return "m4a"
+                
+            case .custom(_, let type, _):
+                return type
+            }
+
         }
     }
 
     public class func startRecordAudio(forUsage usage: Usage, withDecibelSamplePeriodicReport decibelSamplePeriodicReport: PeriodicReport) throws {
-
-        stopPlay()
 
         do {
             let session = AVAudioSession.sharedInstance()
@@ -169,8 +198,8 @@ public extension AudioBot {
             switch usage {
             case .normal:
                 audioRecorder = sharedBot.normalAudioRecorder
-            case .custom(let fileURL, let settings):
-                guard let fileURL = (fileURL ?? FileManager.audiobot_audioFileURLWithName(UUID().uuidString)) else {
+            case .custom(let fileURL, let type, let settings):
+                guard let fileURL = (fileURL ?? FileManager.audiobot_audioFileURLWithName(UUID().uuidString, type)) else {
                     throw AudioBotError.noFileURL
                 }
                 audioRecorder = try AVAudioRecorder(url: fileURL, settings: settings)
@@ -211,7 +240,7 @@ public extension AudioBot {
         AudioBot.reportRecordingDuration?(audioRecorder.currentTime)
     }
 
-    public class func stopRecord(_ finish: (_ fileURL: URL, _ duration: TimeInterval, _ decibelSamples: [Float]) -> Void) {
+    public class func stopRecord(_ finish: ResultReport?) {
 
         defer {
             sharedBot.clearForRecording()
@@ -224,7 +253,11 @@ public extension AudioBot {
         let duration = audioRecorder.currentTime
 
         audioRecorder.stop()
-
+        
+        guard let finish = finish else {
+            return
+        }
+        
         finish(audioRecorder.url, duration, sharedBot.decibelSamples)
     }
 
@@ -298,13 +331,75 @@ public extension AudioBot {
     }
 }
 
+// MARK: - AutomaticRecord
+
+public extension AudioBot {
+    public class func startAutomaticRecordAudio(forUsage usage: Usage, withVADSetting setting :VAD, withDecibelSamplePeriodicReport decibelSamplePeriodicReport: PeriodicReport, withRecordResultReport recordResultReport: @escaping ResultReport) throws {
+        do {
+            
+            sharedBot.automaticRecordEnable = true
+            
+            let settings = usage.settings
+            let type = usage.type
+            guard let url = usage.fileURL?.appendingPathComponent(UUID().uuidString + "." + type, isDirectory: false) else { fatalError() }
+            
+            let newUsage = AudioBot.Usage.custom(fileURL: url, type: type, settings: settings)
+            
+            var isValid = false
+            var count = 0
+            let activeCount = Int(decibelSamplePeriodicReport.reportingFrequency * setting.silenceTime)
+            
+            func retry() {
+                if !sharedBot.automaticRecordEnable { return }
+                
+                try! startAutomaticRecordAudio(forUsage: usage, withVADSetting: setting, withDecibelSamplePeriodicReport: decibelSamplePeriodicReport, withRecordResultReport: recordResultReport)
+            }
+            
+            let decibelPeriodicReport: AudioBot.PeriodicReport = (reportingFrequency: decibelSamplePeriodicReport.reportingFrequency, report: { decibelSample in
+                decibelSamplePeriodicReport.report(decibelSample)
+                
+                if decibelSample > setting.silenceVolume {
+                    isValid = true
+                    count = 0
+                }else if isValid {
+                    count += 1
+                }
+                
+                if count > activeCount, isValid {
+                    stopRecord({ (fileURL, duration, decibelSamples) in
+                        recordResultReport(fileURL, duration, decibelSamples)
+                    })
+                    retry()
+                }
+            })
+            try startRecordAudio(forUsage: newUsage, withDecibelSamplePeriodicReport: decibelPeriodicReport)
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + setting.spaceTime, execute: {
+                if !isValid {
+                    stopRecord(nil)
+                    retry()
+                }
+                
+            })
+            
+        }
+        catch let error {
+            throw error
+        }
+    }
+    
+    public class func stopAutomaticRecord() {
+        stopRecord(nil)
+        sharedBot.automaticRecordEnable = false
+    }
+    
+}
+
 // MARK: - Playback
 
 public extension AudioBot {
 
     public class func startPlayAudioAtFileURL(_ fileURL: URL, fromTime: TimeInterval, withProgressPeriodicReport progressPeriodicReport: PeriodicReport, finish: @escaping (Bool) -> Void) throws {
-
-        stopRecord { _, _, _ in }
 
         let session = AVAudioSession.sharedInstance()
         if !session.audiobot_canPlay {
