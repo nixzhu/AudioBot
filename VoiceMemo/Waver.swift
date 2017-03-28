@@ -154,15 +154,14 @@ final class Waver: UIView {
                 // We use a parable to scale the sinus wave, that has its peak in the middle of the view.
                 let scaling = -pow(x/self.waveMid-1, 2) + 1 // make center bigger
                 
-                var y = scaling*self.maxAmplitude*normedAmplitude
-                let temp = 2.0*CGFloat(M_PI)*(x/self.waveWidth)*self.frequency
-                let temp2 = temp+self.phase
-                y = CGFloat(y)*CGFloat(sinf(Float(temp2))) + self.waveHeight
+                var y = scaling * self.maxAmplitude*normedAmplitude
+                let temp = 2 * CGFloat.pi * (x / self.waveWidth) * self.frequency
+                let temp2 = temp + self.phase
+                y = CGFloat(y) * CGFloat(sinf(Float(temp2))) + self.waveHeight
                 
                 if (x==0) {
                     wavelinePath.move(to: CGPoint(x: x, y: y))
-                }
-                else {
+                } else {
                     wavelinePath.addLine(to: CGPoint(x: x, y: y))
                 }
 

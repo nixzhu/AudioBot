@@ -409,7 +409,9 @@ extension AudioBot: AVAudioRecorderDelegate {
     }
 
     public func audioRecorderEncodeErrorDidOccur(_ recorder: AVAudioRecorder, error: Error?) {
-        print("AudioBot audioRecorderEncodeErrorDidOccur: \(error)")
+        error.flatMap {
+            print("AudioBot audioRecorderEncodeErrorDidOccur: \($0)")
+        }
         if let fileURL = AudioBot.recordingFileURL {
             AudioBot.removeAudioAtFileURL(fileURL)
         }
@@ -430,7 +432,9 @@ extension AudioBot: AVAudioPlayerDelegate {
     }
 
     public func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
-        print("AudioBot audioPlayerDecodeErrorDidOccur: \(error)")
+        error.flatMap {
+            print("AudioBot audioPlayerDecodeErrorDidOccur: \($0)")
+        }
         clearForPlaying(finish: true)
         playingFinish?(false)
         playingFinish = nil
