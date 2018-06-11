@@ -79,7 +79,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func record(_ sender: UIButton) {
-        if AudioBot.recording {
+        if AudioBot.isRecording {
             AudioBot.stopRecord { [weak self] fileURL, duration, decibelSamples in
                 print("fileURL: \(fileURL)")
                 print("duration: \(duration)")
@@ -139,7 +139,7 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
                     print("play error: \(error)")
                 }
             }
-            if AudioBot.playing {
+            if AudioBot.isPlaying {
                 AudioBot.pausePlay()
                 if let strongSelf = self {
                     for index in 0..<(strongSelf.voiceMemos).count {

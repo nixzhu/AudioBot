@@ -39,7 +39,7 @@ final public class AudioBot: NSObject {
     fileprivate var audioRecorder: AVAudioRecorder?
     fileprivate var audioPlayer: AVAudioPlayer?
 
-    public static var recording: Bool {
+    public static var isRecording: Bool {
         return sharedBot.audioRecorder?.isRecording ?? false
     }
 
@@ -47,7 +47,7 @@ final public class AudioBot: NSObject {
         return sharedBot.audioRecorder?.url
     }
 
-    public static var playing: Bool {
+    public static var isPlaying: Bool {
         return sharedBot.audioPlayer?.isPlaying ?? false
     }
 
