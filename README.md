@@ -9,10 +9,11 @@ AudioBot helps you do audio record & playback.
 
 ## Requirements
 
-Swift 3.1, iOS 8
+Swift 4, iOS 8
 
 - Swift 2.3, use version 0.5.0
 - Swift 3.0, use version 1.1.0
+- Swift 3.1, use version 1.1.1
 
 ## Usage
 
