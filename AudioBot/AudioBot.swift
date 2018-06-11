@@ -426,8 +426,10 @@ extension AudioBot: AVAudioPlayerDelegate {
     public func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         print("AudioBot audioPlayerDidFinishPlaying: \(flag)")
         clearForPlaying(finish: true)
-        playingFinish?(true)
-        playingFinish = nil
+        DispatchQueue.main.async {
+            self.playingFinish?(true)
+            self.playingFinish = nil
+        }
         deactiveAudioSessionAndNotifyOthers()
     }
 
@@ -436,8 +438,10 @@ extension AudioBot: AVAudioPlayerDelegate {
             print("AudioBot audioPlayerDecodeErrorDidOccur: \($0)")
         }
         clearForPlaying(finish: true)
-        playingFinish?(false)
-        playingFinish = nil
+        DispatchQueue.main.async {
+            self.playingFinish?(false)
+            self.playingFinish = nil
+        }
         deactiveAudioSessionAndNotifyOthers()
     }
 }
