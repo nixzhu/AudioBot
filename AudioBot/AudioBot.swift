@@ -351,7 +351,7 @@ extension AudioBot {
         guard progressPeriodicReport.reportingFrequency > 0 else {
             throw AudioBotError.invalidReportingFrequency
         }
-        if let audioPlayer = sharedBot.audioPlayer , audioPlayer.url == fileURL {
+        if let audioPlayer = sharedBot.audioPlayer, audioPlayer.url == fileURL, abs(fromTime - audioPlayer.currentTime) < 0.2 {
             audioPlayer.play()
         } else {
             sharedBot.audioPlayer?.pause()
