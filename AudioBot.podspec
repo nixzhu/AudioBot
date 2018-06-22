@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name        = "AudioBot"
-  s.version     = "1.1.3"
+  s.version     = "1.1.4"
   s.summary     = "AudioBot helps your do audio record & playback."
 
   s.description = <<-DESC
