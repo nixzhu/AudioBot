@@ -343,6 +343,9 @@ extension AudioBot {
         if !session.audiobot_canPlay {
             do {
                 try session.setCategory(AVAudioSessionCategoryPlayback)
+                if #available(iOS 9.0, *) {
+                    try session.setMode(AVAudioSessionModeSpokenAudio)
+                }
                 try session.setActive(true)
             } catch let error {
                 throw error
