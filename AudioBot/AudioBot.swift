@@ -23,8 +23,6 @@ public final class VADSettings: NSObject {
 
 final public class AudioBot: NSObject {
 
-    public static var mixWithOthersWhenRecording: Bool = false
-
     fileprivate static let sharedBot = AudioBot()
 
     private override init() {
@@ -155,17 +153,17 @@ extension AudioBot {
         }
     }
 
-    public class func startRecordAudio(forUsage usage: Usage, withDecibelSamplePeriodicReport decibelSamplePeriodicReport: PeriodicReport) throws {
+    public class func startRecordAudio(forUsage usage: Usage, categoryOptions: AVAudioSessionCategoryOptions = [.mixWithOthers, .defaultToSpeaker], withDecibelSamplePeriodicReport decibelSamplePeriodicReport: PeriodicReport) throws {
         do {
             let session = AVAudioSession.sharedInstance()
+            let mixWithOthersWhenRecording = categoryOptions.contains(.mixWithOthers)
             if mixWithOthersWhenRecording {
-                let categoryOptions: AVAudioSessionCategoryOptions = [.mixWithOthers, .defaultToSpeaker]
                 if session.category != AVAudioSessionCategoryPlayAndRecord || session.categoryOptions != categoryOptions {
                     try session.setCategory(AVAudioSessionCategoryPlayAndRecord, with: categoryOptions)
                 }
             } else {
                 if session.category != AVAudioSessionCategoryRecord {
-                    try session.setCategory(AVAudioSessionCategoryRecord)
+                    try session.setCategory(AVAudioSessionCategoryRecord, with: categoryOptions)
                 }
             }
             try session.setActive(true)

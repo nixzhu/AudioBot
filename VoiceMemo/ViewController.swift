@@ -54,7 +54,6 @@ class ViewController: UIViewController {
                     print("decibelSample: \(decibelSample)")
                     self.waver.level = CGFloat(decibelSample)
                 })
-                AudioBot.mixWithOthersWhenRecording = true
                 let vadSettings = VADSettings()
                 vadSettings.silenceDuration = 0.75
                 vadSettings.silenceVolume = 0.05
@@ -96,7 +95,6 @@ class ViewController: UIViewController {
                 let decibelSamplePeriodicReport: AudioBot.PeriodicReport = (reportingFrequency: 10, report: { decibelSample in
                     print("decibelSample: \(decibelSample)")
                 })
-                AudioBot.mixWithOthersWhenRecording = true
                 try AudioBot.startRecordAudio(forUsage: .normal, withDecibelSamplePeriodicReport: decibelSamplePeriodicReport)
                 recordButton.appearance = .recording
             } catch {
