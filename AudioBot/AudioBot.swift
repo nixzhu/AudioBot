@@ -340,7 +340,7 @@ extension AudioBot {
     public class func startPlayAudioAtFileURL(_ fileURL: URL, fromTime: TimeInterval, categoryOptions: AVAudioSessionCategoryOptions = [], withProgressPeriodicReport progressPeriodicReport: PeriodicReport, finish: @escaping (Bool) -> Void) throws {
         let session = AVAudioSession.sharedInstance()
         do {
-            if #available(iOSApplicationExtension 10.0, *) {
+            if #available(iOS 10.0, *) {
                 try session.setCategory(
                     AVAudioSessionCategoryPlayAndRecord,
                     mode: AVAudioSessionModeDefault,
