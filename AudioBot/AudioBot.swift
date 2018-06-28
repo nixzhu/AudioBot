@@ -225,6 +225,7 @@ extension AudioBot {
         let duration = audioRecorder.currentTime
         audioRecorder.stop()
         finish?(audioRecorder.url, duration, sharedBot.decibelSamples)
+        sharedBot.deactiveAudioSessionAndNotifyOthers()
     }
 
     public class func removeAudioAtFileURL(_ fileURL: URL) {
