@@ -153,7 +153,7 @@ extension AudioBot {
         }
     }
 
-    public class func startRecordAudio(forUsage usage: Usage, categoryOptions: AVAudioSessionCategoryOptions = [.mixWithOthers, .defaultToSpeaker], withDecibelSamplePeriodicReport decibelSamplePeriodicReport: PeriodicReport) throws {
+    public class func startRecordAudio(forUsage usage: Usage, categoryOptions: AVAudioSessionCategoryOptions = [], withDecibelSamplePeriodicReport decibelSamplePeriodicReport: PeriodicReport) throws {
         do {
             let session = AVAudioSession.sharedInstance()
             let mixWithOthersWhenRecording = categoryOptions.contains(.mixWithOthers)
@@ -336,18 +336,21 @@ extension AudioBot {
 
 extension AudioBot {
 
-    public class func startPlayAudioAtFileURL(_ fileURL: URL, fromTime: TimeInterval, withProgressPeriodicReport progressPeriodicReport: PeriodicReport, finish: @escaping (Bool) -> Void) throws {
+    public class func startPlayAudioAtFileURL(_ fileURL: URL, fromTime: TimeInterval, categoryOptions: AVAudioSessionCategoryOptions = [], withProgressPeriodicReport progressPeriodicReport: PeriodicReport, finish: @escaping (Bool) -> Void) throws {
         let session = AVAudioSession.sharedInstance()
-        if !session.audiobot_canPlay {
-            do {
-                try session.setCategory(AVAudioSessionCategoryPlayback)
-                if #available(iOS 9.0, *) {
-                    try session.setMode(AVAudioSessionModeSpokenAudio)
-                }
-                try session.setActive(true)
-            } catch let error {
-                throw error
+        do {
+            if #available(iOSApplicationExtension 10.0, *) {
+                try session.setCategory(
+                    AVAudioSessionCategoryPlayAndRecord,
+                    mode: AVAudioSessionModeDefault,
+                    options: categoryOptions
+                )
+            } else {
+                try session.setCategory(AVAudioSessionCategoryPlayAndRecord)
             }
+            try session.setActive(true)
+        } catch let error {
+            throw error
         }
         guard progressPeriodicReport.reportingFrequency > 0 else {
             throw AudioBotError.invalidReportingFrequency
