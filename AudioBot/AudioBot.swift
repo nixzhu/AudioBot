@@ -390,18 +390,22 @@ extension AudioBot {
         AudioBot.reportPlayingDuration?(audioPlayer.currentTime)
     }
 
-    public class func pausePlay() {
+    public class func pausePlay(deactiveAndNotifyOthers: Bool = true) {
         sharedBot.clearForPlaying(finish: false)
         sharedBot.audioPlayer?.pause()
-        sharedBot.deactiveAudioSessionAndNotifyOthers()
+        if deactiveAndNotifyOthers {
+            sharedBot.deactiveAudioSessionAndNotifyOthers()
+        }
     }
 
-    public class func stopPlay() {
+    public class func stopPlay(deactiveAndNotifyOthers: Bool = true) {
         sharedBot.clearForPlaying(finish: true)
         sharedBot.audioPlayer?.stop()
         sharedBot.playingFinish?(false)
         sharedBot.playingFinish = nil
-        sharedBot.deactiveAudioSessionAndNotifyOthers()
+        if deactiveAndNotifyOthers {
+            sharedBot.deactiveAudioSessionAndNotifyOthers()
+        }
     }
 }
 
