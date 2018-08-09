@@ -375,7 +375,14 @@ extension AudioBot {
         sharedBot.playingFinish = finish
         let timeInterval = 1 / progressPeriodicReport.reportingFrequency
         DispatchQueue.main.async {
-            let timer = Timer.scheduledTimer(timeInterval: timeInterval, target: sharedBot, selector: #selector(AudioBot.reportPlayingProgress(_:)), userInfo: nil, repeats: true)
+            let timer = Timer(
+                timeInterval: timeInterval,
+                target: sharedBot,
+                selector: #selector(AudioBot.reportPlayingProgress(_:)),
+                userInfo: nil,
+                repeats: true
+            )
+            RunLoop.main.add(timer, forMode: .commonModes)
             sharedBot.playingTimer?.invalidate()
             sharedBot.playingTimer = timer
         }
