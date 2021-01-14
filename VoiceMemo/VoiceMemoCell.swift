@@ -19,9 +19,9 @@ class VoiceMemoCell: UITableViewCell {
         willSet {
             if newValue != playing {
                 if newValue {
-                    playButton.setImage(UIImage(named: "icon_pause"), for: UIControlState())
+                    playButton.setImage(UIImage(named: "icon_pause"), for: UIControl.State())
                 } else {
-                    playButton.setImage(UIImage(named: "icon_play"), for: UIControlState())
+                    playButton.setImage(UIImage(named: "icon_play"), for: UIControl.State())
                 }
             }
         }

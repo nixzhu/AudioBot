@@ -76,12 +76,12 @@ final class Waver: UIView {
         didSet {
             displayLink?.invalidate()
             displayLink = CADisplayLink(target: self, selector: #selector(Waver.callbackWaver))
-            displayLink?.add(to: RunLoop.current, forMode: RunLoopMode.commonModes)
+            displayLink?.add(to: RunLoop.current, forMode: RunLoop.Mode.common)
             
             (0..<self.numberOfWaves).forEach { i in
                 let waveline = CAShapeLayer()
-                waveline.lineCap       = kCALineCapButt
-                waveline.lineJoin      = kCALineJoinRound
+                waveline.lineCap       = CAShapeLayerLineCap.butt
+                waveline.lineJoin      = CAShapeLayerLineJoin.round
                 waveline.strokeColor   = UIColor.clear.cgColor
                 waveline.fillColor     = UIColor.clear.cgColor
                 waveline.lineWidth = (i==0 ? self.mainWaveWidth : self.decorativeWavesWidth)

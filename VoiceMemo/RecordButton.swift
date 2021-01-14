@@ -114,8 +114,8 @@ class RecordButton: UIButton {
                 animation.fromValue = appearance.fromOuterLineWidth
                 animation.toValue = appearance.toOuterLineWidth
                 animation.duration = duration
-                animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
-                animation.fillMode = kCAFillModeBoth
+                animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
+                animation.fillMode = CAMediaTimingFillMode.both
                 animation.isRemovedOnCompletion = false
 
                 outerShapeLayer.add(animation, forKey: "lineWidth")
@@ -126,8 +126,8 @@ class RecordButton: UIButton {
                 animation.fromValue = appearance.fromOuterFillColor.cgColor
                 animation.toValue = appearance.toOuterFillColor.cgColor
                 animation.duration = duration
-                animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
-                animation.fillMode = kCAFillModeBoth
+                animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
+                animation.fillMode = CAMediaTimingFillMode.both
                 animation.isRemovedOnCompletion = false
 
                 outerShapeLayer.add(animation, forKey: "fillColor")
@@ -139,8 +139,8 @@ class RecordButton: UIButton {
                 animation.fromValue = fromInnerPath.cgPath
                 animation.toValue = toInnerPath.cgPath
                 animation.duration = duration
-                animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
-                animation.fillMode = kCAFillModeBoth
+                animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
+                animation.fillMode = CAMediaTimingFillMode.both
                 animation.isRemovedOnCompletion = false
 
                 innerShapeLayer.add(animation, forKey: "path")
@@ -151,8 +151,8 @@ class RecordButton: UIButton {
                 animation.fromValue = appearance.fromInnerFillColor.cgColor
                 animation.toValue = appearance.toInnerFillColor.cgColor
                 animation.duration = duration
-                animation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseOut)
-                animation.fillMode = kCAFillModeBoth
+                animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeOut)
+                animation.fillMode = CAMediaTimingFillMode.both
                 animation.isRemovedOnCompletion = false
 
                 innerShapeLayer.add(animation, forKey: "fillColor")
@@ -166,7 +166,7 @@ class RecordButton: UIButton {
         layer.lineWidth = self.appearance.toOuterLineWidth
         layer.strokeColor = UIColor.blue.cgColor
         layer.fillColor = self.appearance.toOuterFillColor.cgColor
-        layer.fillRule = kCAFillRuleEvenOdd
+        layer.fillRule = CAShapeLayerFillRule.evenOdd
         layer.contentsScale = UIScreen.main.scale
         return layer
     }()
@@ -175,7 +175,7 @@ class RecordButton: UIButton {
         let layer = CAShapeLayer()
         layer.path = self.toInnerPath.cgPath
         layer.fillColor = self.appearance.toInnerFillColor.cgColor
-        layer.fillRule = kCAFillRuleEvenOdd
+        layer.fillRule = CAShapeLayerFillRule.evenOdd
         layer.contentsScale = UIScreen.main.scale
         return layer
     }()
